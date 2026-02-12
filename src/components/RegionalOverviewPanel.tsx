@@ -47,7 +47,7 @@ const RegionalOverviewPanel = ({ onRegionalClick, filterStatus }: RegionalOvervi
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full stagger-children">
       {regionalStats.map((r) => {
         const cfg = statusConfig[r.status];
         const Icon = cfg.icon;
@@ -55,7 +55,8 @@ const RegionalOverviewPanel = ({ onRegionalClick, filterStatus }: RegionalOvervi
           <button
             key={r.regional}
             onClick={() => onRegionalClick(r.regional)}
-            className={`${cfg.bg} border ${cfg.border} rounded-lg p-5 text-left transition-all duration-200 hover:shadow-md group`}
+            className={`${cfg.bg} border-0 rounded-xl p-5 text-left card-hover group`}
+            style={{ boxShadow: 'var(--shadow-card)' }}
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">

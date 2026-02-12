@@ -44,7 +44,8 @@ const SituacaoGeralCard = ({ metasNoPrazo, escolasEmRisco }: SituacaoGeralProps)
   const Icon = c.icon;
 
   return (
-    <div className={`${c.bg} border ${c.border} rounded-lg p-6 flex items-center gap-5`}>
+    <div className={`${c.bg} border-0 rounded-xl p-6 flex items-center gap-5 card-hover animate-fade-up`}
+      style={{ boxShadow: 'var(--shadow-card)' }}>
       <div className={`h-14 w-14 rounded-xl ${c.bg} flex items-center justify-center shrink-0`}>
         <Icon className={`h-7 w-7 ${c.iconColor}`} />
       </div>

@@ -95,8 +95,8 @@ const CicloGestaoPanel = ({ escola }: CicloGestaoPanelProps) => {
           return (
             <div key={step.label} className="flex items-center">
               <div
-                className={`${s.bg} border ${s.border} rounded-lg p-4 flex flex-col items-center gap-2 min-w-[130px] text-center`}
-              >
+                className={`${s.bg} border-0 rounded-xl p-4 flex flex-col items-center gap-2 min-w-[130px] text-center card-hover`}
+                style={{ boxShadow: 'var(--shadow-card)' }}>
                 <div
                   className={`h-10 w-10 rounded-full ${s.iconBg} flex items-center justify-center`}
                 >
