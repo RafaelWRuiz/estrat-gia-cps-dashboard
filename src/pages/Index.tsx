@@ -9,6 +9,7 @@ import ProblemsPanel from "@/components/ProblemsPanel";
 import ProcessoVivoPanel from "@/components/ProcessoVivoPanel";
 import AprendizagemPanel from "@/components/AprendizagemPanel";
 import SituacaoPieChart from "@/components/SituacaoPieChart";
+import TopProblemasChart from "@/components/TopProblemasChart";
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart } from "lucide-react";
 import { problems } from "@/data/problems";
 
@@ -148,9 +149,14 @@ const PresidenciaView = ({ metasNoPrazo, escolasEmRisco }: { metasNoPrazo: numbe
       </div>
     </div>
 
-    <DashboardSection title="Processo Vivo" icon={RefreshCw}>
-      <ProcessoVivoPanel />
-    </DashboardSection>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <DashboardSection title="Processo Vivo" icon={RefreshCw}>
+        <ProcessoVivoPanel />
+      </DashboardSection>
+      <DashboardSection title="Principais Problemas da Rede" icon={BarChart3}>
+        <TopProblemasChart />
+      </DashboardSection>
+    </div>
 
     <DashboardSection title="Gestão por Problemas" icon={AlertTriangle}>
       <ProblemsPanel />
