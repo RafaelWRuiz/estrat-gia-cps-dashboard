@@ -3,6 +3,7 @@ import DashboardSection from "@/components/DashboardSection";
 import KpiCard from "@/components/KpiCard";
 import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import ProblemsPanel from "@/components/ProblemsPanel";
+import ProcessoVivoPanel from "@/components/ProcessoVivoPanel";
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen } from "lucide-react";
 
 const Index = () => {
@@ -27,7 +28,9 @@ const Index = () => {
           <DashboardSection title="Visão por Escola" icon={School}>
             <SchoolVisionPanel />
           </DashboardSection>
-          <DashboardSection title="Processo Vivo" icon={RefreshCw} />
+          <DashboardSection title="Processo Vivo" icon={RefreshCw}>
+            <ProcessoVivoPanel />
+          </DashboardSection>
         </div>
 
         <DashboardSection title="Gestão por Problemas" icon={AlertTriangle}>
