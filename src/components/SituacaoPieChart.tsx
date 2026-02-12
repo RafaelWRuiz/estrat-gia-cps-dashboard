@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const allSchools = [
   { name: "ETEC Paulistano", regional: "São Paulo", status: "good" },
@@ -14,9 +14,9 @@ const allSchools = [
 ];
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  good: { label: "Adequada", color: "hsl(152, 60%, 42%)" },
-  warning: { label: "Atenção", color: "hsl(43, 96%, 50%)" },
-  critical: { label: "Crítico", color: "hsl(0, 72%, 51%)" },
+  good: { label: "Adequada", color: "hsl(0, 0%, 78%)" },
+  warning: { label: "Atenção", color: "hsl(0, 45%, 70%)" },
+  critical: { label: "Crítico", color: "hsl(0, 100%, 35%)" },
 };
 
 interface SituacaoPieChartProps {
@@ -39,18 +39,20 @@ const SituacaoPieChart = ({ filterRegional }: SituacaoPieChartProps) => {
     color: statusConfig[status].color,
   }));
 
+  const total = schools.length;
+
   return (
-    <div className="w-full flex flex-col items-center gap-4">
-      <div className="w-full max-w-[280px] aspect-square">
+    <div className="w-full flex items-center gap-6">
+      <div className="w-[200px] h-[200px] relative shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius="55%"
-              outerRadius="85%"
-              paddingAngle={3}
+              innerRadius="62%"
+              outerRadius="88%"
+              paddingAngle={2}
               dataKey="value"
               stroke="none"
             >
@@ -58,26 +60,24 @@ const SituacaoPieChart = ({ filterRegional }: SituacaoPieChartProps) => {
                 <Cell key={index} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip
-              formatter={(value: number, name: string) => [`${value} escola${value > 1 ? "s" : ""}`, name]}
-              contentStyle={{
-                fontSize: "11px",
-                borderRadius: "6px",
-                border: "1px solid hsl(var(--border))",
-                boxShadow: "var(--shadow-card)",
-              }}
-            />
           </PieChart>
         </ResponsiveContainer>
+        {/* Center label */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <span className="text-3xl font-bold text-foreground leading-none">{total}</span>
+          <span className="text-[10px] text-muted-foreground mt-1">escolas</span>
+        </div>
       </div>
 
-      <div className="flex items-center gap-5">
+      {/* Side labels */}
+      <div className="flex flex-col gap-3">
         {data.map((d) => (
-          <div key={d.name} className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: d.color }} />
-            <span className="text-[11px] text-muted-foreground">
-              {d.name} ({d.value})
-            </span>
+          <div key={d.name} className="flex items-center gap-2.5">
+            <span className="h-3 w-3 rounded-sm shrink-0" style={{ backgroundColor: d.color }} />
+            <div>
+              <span className="text-sm font-bold text-foreground">{d.value}</span>
+              <span className="text-[11px] text-muted-foreground ml-1.5">{d.name}</span>
+            </div>
           </div>
         ))}
       </div>
