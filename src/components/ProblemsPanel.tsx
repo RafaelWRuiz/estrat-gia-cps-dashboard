@@ -11,7 +11,9 @@ const statusConfig = {
 
 const ProblemsPanel = () => {
   const [eixoFilter, setEixoFilter] = useState("Todos");
-  const [statusFilter, setStatusFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("critical");
+
+  const criticalCount = problems.filter((p) => p.status === "critical").length;
 
   const filtered = problems.filter((p) => {
     if (eixoFilter !== "Todos" && p.eixo !== eixoFilter) return false;
@@ -23,6 +25,17 @@ const ProblemsPanel = () => {
 
   return (
     <div className="w-full space-y-4">
+      {/* Critical highlight */}
+      <div className="flex items-center gap-3 bg-destructive/5 rounded-md px-4 py-3">
+        <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+          <span className="text-base font-bold text-destructive">{criticalCount}</span>
+        </div>
+        <div>
+          <p className="text-xs font-bold text-foreground">Problemas críticos na rede</p>
+          <p className="text-[10px] text-muted-foreground">Requerem atenção imediata da gestão</p>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex flex-col gap-0.5">

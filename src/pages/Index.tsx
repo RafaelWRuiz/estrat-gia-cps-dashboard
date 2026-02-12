@@ -1,6 +1,7 @@
 import DashboardHeader from "@/components/DashboardHeader";
 import DashboardSection from "@/components/DashboardSection";
 import KpiCard from "@/components/KpiCard";
+import SituacaoGeralCard from "@/components/SituacaoGeralCard";
 import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import ProblemsPanel from "@/components/ProblemsPanel";
 import ProcessoVivoPanel from "@/components/ProcessoVivoPanel";
@@ -13,6 +14,9 @@ const Index = () => {
       <DashboardHeader />
 
       <main className="flex-1 px-8 py-7 space-y-7 max-w-[1440px] w-full mx-auto">
+        {/* Situação Geral */}
+        <SituacaoGeralCard metasNoPrazo={72} escolasEmRisco={14} />
+
         {/* Indicadores Principais */}
         <DashboardSection title="Indicadores Principais" icon={BarChart3}>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 w-full">
