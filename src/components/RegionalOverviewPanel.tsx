@@ -24,10 +24,11 @@ const statusConfig = {
 
 interface RegionalOverviewPanelProps {
   onRegionalClick: (regional: string) => void;
+  filterStatus?: string;
 }
 
-const RegionalOverviewPanel = ({ onRegionalClick }: RegionalOverviewPanelProps) => {
-  const regionalStats = regionals.map((reg) => {
+const RegionalOverviewPanel = ({ onRegionalClick, filterStatus }: RegionalOverviewPanelProps) => {
+  let regionalStats = regionals.map((reg) => {
     const schools = schoolsData.filter((s) => s.regional === reg);
     const avgMetas = Math.round(schools.reduce((s, sc) => s + sc.metasNoPrazo, 0) / schools.length);
     const emRisco = schools.filter((s) => s.status === "critical").length;
@@ -40,6 +41,10 @@ const RegionalOverviewPanel = ({ onRegionalClick }: RegionalOverviewPanelProps) 
 
     return { regional: reg, avgMetas, emRisco, criticos, totalEscolas, status };
   });
+
+  if (filterStatus && filterStatus !== "Todos") {
+    regionalStats = regionalStats.filter((r) => r.status === filterStatus);
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">

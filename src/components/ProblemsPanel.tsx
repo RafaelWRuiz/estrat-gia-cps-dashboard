@@ -12,12 +12,19 @@ const statusConfig = {
 interface ProblemsPanelProps {
   filterRegional?: string;
   filterEscola?: string;
+  filterEixo?: string;
+  filterStatus?: string;
   showOnlyDelayed?: boolean;
 }
 
-const ProblemsPanel = ({ filterRegional, filterEscola, showOnlyDelayed }: ProblemsPanelProps) => {
+const ProblemsPanel = ({ filterRegional, filterEscola, filterEixo, filterStatus, showOnlyDelayed }: ProblemsPanelProps) => {
+  const externalEixo = filterEixo && filterEixo !== "Todos" ? filterEixo : undefined;
+  const externalStatus = filterStatus && filterStatus !== "Todos" ? filterStatus : undefined;
   const [eixoFilter, setEixoFilter] = useState("Todos");
   const [statusFilter, setStatusFilter] = useState(showOnlyDelayed ? "Todos" : "critical");
+
+  const activeEixo = externalEixo || eixoFilter;
+  const activeStatus = externalStatus || statusFilter;
 
   // Base filter by regional/escola
   const baseProblems = problems.filter((p) => {
@@ -30,10 +37,10 @@ const ProblemsPanel = ({ filterRegional, filterEscola, showOnlyDelayed }: Proble
   const criticalCount = baseProblems.filter((p) => p.status === "critical").length;
 
   const filtered = baseProblems.filter((p) => {
-    if (eixoFilter !== "Todos" && p.eixo !== eixoFilter) return false;
-    if (statusFilter === "good" && p.status !== "good") return false;
-    if (statusFilter === "warning" && p.status !== "warning") return false;
-    if (statusFilter === "critical" && p.status !== "critical") return false;
+    if (activeEixo !== "Todos" && p.eixo !== activeEixo) return false;
+    if (activeStatus === "good" && p.status !== "good") return false;
+    if (activeStatus === "warning" && p.status !== "warning") return false;
+    if (activeStatus === "critical" && p.status !== "critical") return false;
     return true;
   });
 
@@ -68,23 +75,25 @@ const ProblemsPanel = ({ filterRegional, filterEscola, showOnlyDelayed }: Proble
         </div>
       )}
 
-      {/* Filters */}
+      {/* Filters - hide when controlled externally */}
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex flex-col gap-0.5">
-          <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">Eixo</label>
-          <Select value={eixoFilter} onValueChange={setEixoFilter}>
-            <SelectTrigger className="h-7 w-[220px] text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Todos" className="text-xs">Todos os eixos</SelectItem>
-              {eixos.map((e) => (
-                <SelectItem key={e} value={e} className="text-xs">{e}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        {!showOnlyDelayed && (
+        {!externalEixo && (
+          <div className="flex flex-col gap-0.5">
+            <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">Eixo</label>
+            <Select value={eixoFilter} onValueChange={setEixoFilter}>
+              <SelectTrigger className="h-7 w-[220px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Todos" className="text-xs">Todos os eixos</SelectItem>
+                {eixos.map((e) => (
+                  <SelectItem key={e} value={e} className="text-xs">{e}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        {!showOnlyDelayed && !externalStatus && (
           <div className="flex flex-col gap-0.5">
             <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">Status</label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
