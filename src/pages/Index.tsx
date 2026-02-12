@@ -4,6 +4,7 @@ import KpiCard from "@/components/KpiCard";
 import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import ProblemsPanel from "@/components/ProblemsPanel";
 import ProcessoVivoPanel from "@/components/ProcessoVivoPanel";
+import AprendizagemPanel from "@/components/AprendizagemPanel";
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen } from "lucide-react";
 
 const Index = () => {
@@ -37,7 +38,9 @@ const Index = () => {
           <ProblemsPanel />
         </DashboardSection>
 
-        <DashboardSection title="Aprendizagem Institucional" icon={BookOpen} />
+        <DashboardSection title="Aprendizagem Institucional" icon={BookOpen}>
+          <AprendizagemPanel />
+        </DashboardSection>
       </main>
 
       <footer className="px-8 py-4 text-center text-[10px] text-muted-foreground">
