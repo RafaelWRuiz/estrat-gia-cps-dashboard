@@ -13,6 +13,7 @@ import AprendizagemPanel from "@/components/AprendizagemPanel";
 import CicloGestaoPanel from "@/components/CicloGestaoPanel";
 import SituacaoPieChart from "@/components/SituacaoPieChart";
 import TopProblemasChart from "@/components/TopProblemasChart";
+import SinteseExecutivaPanel from "@/components/SinteseExecutivaPanel";
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart } from "lucide-react";
 import { problems, getSmartStats } from "@/data/problems";
 
@@ -178,6 +179,8 @@ const PresidenciaView = ({
   filterStatus: string;
 }) => (
   <>
+    <SinteseExecutivaPanel />
+
     <RegionalRiscoDestaque onRegionalClick={onRegionalClick} />
 
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
