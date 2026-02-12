@@ -53,7 +53,11 @@ export function AppSidebar({
   selectedStatus,
   onStatusChange,
 }: AppSidebarProps) {
-  const availableSchools = schoolsByRegional[selectedRegional] || [];
+  const allSchools = Object.values(schoolsByRegional).flat();
+  const availableSchools =
+    selectedRegional && selectedRegional !== "Todas"
+      ? schoolsByRegional[selectedRegional] || []
+      : allSchools;
 
   return (
     <Sidebar className="border-r border-border bg-card">
@@ -108,8 +112,8 @@ export function AppSidebar({
           <SidebarGroupLabel className="text-[9px] uppercase tracking-widest px-5">Filtros</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="px-5 space-y-3 mt-1">
-              {/* Presidência: Regional (opcional) */}
-              {currentView === "presidencia" && (
+              {/* Presidência + Regional: Regional */}
+              {(currentView === "presidencia" || currentView === "regional") && (
                 <div className="space-y-1">
                   <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
                     Regional
@@ -118,7 +122,7 @@ export function AppSidebar({
                     <SelectTrigger className="h-8 text-xs bg-muted border-0">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover z-50">
                       <SelectItem value="Todas" className="text-xs">Todas</SelectItem>
                       {regionals.map((r) => (
                         <SelectItem key={r} value={r} className="text-xs">{r}</SelectItem>
@@ -128,8 +132,8 @@ export function AppSidebar({
                 </div>
               )}
 
-              {/* Regional: Escola (opcional) */}
-              {currentView === "regional" && (
+              {/* Presidência + Regional: Escola */}
+              {(currentView === "presidencia" || currentView === "regional") && (
                 <div className="space-y-1">
                   <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
                     Escola
@@ -138,7 +142,7 @@ export function AppSidebar({
                     <SelectTrigger className="h-8 text-xs bg-muted border-0">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover z-50">
                       <SelectItem value="Todas" className="text-xs">Todas</SelectItem>
                       {availableSchools.map((s) => (
                         <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>
@@ -148,8 +152,8 @@ export function AppSidebar({
                 </div>
               )}
 
-              {/* Regional + Unidade: Eixo estratégico */}
-              {(currentView === "regional" || currentView === "unidade") && (
+              {/* Regional: Eixo estratégico */}
+              {currentView === "regional" && (
                 <div className="space-y-1">
                   <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
                     Eixo Estratégico
@@ -158,7 +162,7 @@ export function AppSidebar({
                     <SelectTrigger className="h-8 text-xs bg-muted border-0">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover z-50">
                       <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
                       {eixosList.map((e) => (
                         <SelectItem key={e} value={e} className="text-xs">{e}</SelectItem>
@@ -168,23 +172,65 @@ export function AppSidebar({
                 </div>
               )}
 
-              {/* Todos os níveis: Status */}
-              <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
-                  Status
-                </label>
-                <Select value={selectedStatus} onValueChange={onStatusChange}>
-                  <SelectTrigger className="h-8 text-xs bg-muted border-0">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
-                    <SelectItem value="good" className="text-xs">Adequada</SelectItem>
-                    <SelectItem value="warning" className="text-xs">Atenção</SelectItem>
-                    <SelectItem value="critical" className="text-xs">Crítico</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Unidade: Eixo estratégico */}
+              {currentView === "unidade" && (
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
+                    Eixo Estratégico
+                  </label>
+                  <Select value={selectedEixo} onValueChange={onEixoChange}>
+                    <SelectTrigger className="h-8 text-xs bg-muted border-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
+                      {eixosList.map((e) => (
+                        <SelectItem key={e} value={e} className="text-xs">{e}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Presidência + Regional: Status */}
+              {(currentView === "presidencia" || currentView === "regional") && (
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
+                    Status
+                  </label>
+                  <Select value={selectedStatus} onValueChange={onStatusChange}>
+                    <SelectTrigger className="h-8 text-xs bg-muted border-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
+                      <SelectItem value="good" className="text-xs">Adequada</SelectItem>
+                      <SelectItem value="warning" className="text-xs">Atenção</SelectItem>
+                      <SelectItem value="critical" className="text-xs">Crítica</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Unidade: Status */}
+              {currentView === "unidade" && (
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
+                    Status
+                  </label>
+                  <Select value={selectedStatus} onValueChange={onStatusChange}>
+                    <SelectTrigger className="h-8 text-xs bg-muted border-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
+                      <SelectItem value="good" className="text-xs">Adequada</SelectItem>
+                      <SelectItem value="warning" className="text-xs">Atenção</SelectItem>
+                      <SelectItem value="critical" className="text-xs">Crítica</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
