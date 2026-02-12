@@ -14,9 +14,9 @@ const allSchools = [
 ];
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  good: { label: "Adequada", color: "hsl(0, 0%, 78%)" },
-  warning: { label: "Atenção", color: "hsl(0, 45%, 70%)" },
-  critical: { label: "Crítico", color: "hsl(0, 100%, 35%)" },
+  good: { label: "Adequada", color: "#2E7D5B" },
+  warning: { label: "Atenção", color: "#D9A441" },
+  critical: { label: "Crítico", color: "#C62828" },
 };
 
 interface SituacaoPieChartProps {
