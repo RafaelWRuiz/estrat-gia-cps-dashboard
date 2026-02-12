@@ -8,7 +8,8 @@ import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import ProblemsPanel from "@/components/ProblemsPanel";
 import ProcessoVivoPanel from "@/components/ProcessoVivoPanel";
 import AprendizagemPanel from "@/components/AprendizagemPanel";
-import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin } from "lucide-react";
+import SituacaoPieChart from "@/components/SituacaoPieChart";
+import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart } from "lucide-react";
 import { problems } from "@/data/problems";
 
 const schoolsByRegional: Record<string, string[]> = {
@@ -136,14 +137,20 @@ const PresidenciaView = ({ metasNoPrazo, escolasEmRisco }: { metasNoPrazo: numbe
       </div>
     </DashboardSection>
 
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <DashboardSection title="Visão por Escola" icon={School}>
-        <SchoolVisionPanel />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <DashboardSection title="Situação das Escolas na Rede" icon={PieChart}>
+        <SituacaoPieChart />
       </DashboardSection>
-      <DashboardSection title="Processo Vivo" icon={RefreshCw}>
-        <ProcessoVivoPanel />
-      </DashboardSection>
+      <div className="lg:col-span-2">
+        <DashboardSection title="Visão por Escola" icon={School}>
+          <SchoolVisionPanel />
+        </DashboardSection>
+      </div>
     </div>
+
+    <DashboardSection title="Processo Vivo" icon={RefreshCw}>
+      <ProcessoVivoPanel />
+    </DashboardSection>
 
     <DashboardSection title="Gestão por Problemas" icon={AlertTriangle}>
       <ProblemsPanel />
