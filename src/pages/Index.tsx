@@ -4,6 +4,7 @@ import AppSidebar, { type ViewType } from "@/components/AppSidebar";
 import DashboardSection from "@/components/DashboardSection";
 import KpiCard from "@/components/KpiCard";
 import SituacaoGeralCard from "@/components/SituacaoGeralCard";
+import RegionalRiscoDestaque from "@/components/RegionalRiscoDestaque";
 import RegionalOverviewPanel from "@/components/RegionalOverviewPanel";
 import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import ProblemsPanel from "@/components/ProblemsPanel";
@@ -176,6 +177,8 @@ const PresidenciaView = ({
   filterStatus: string;
 }) => (
   <>
+    <RegionalRiscoDestaque onRegionalClick={onRegionalClick} />
+
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
 
     <DashboardSection title="Indicadores Principais" icon={BarChart3}>
