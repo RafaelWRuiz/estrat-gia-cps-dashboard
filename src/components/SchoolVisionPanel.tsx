@@ -1,14 +1,14 @@
 const schools = [
   { name: "ETEC Paulistano", regional: "São Paulo", metasNoPrazo: 92, status: "good" as const },
-  { name: "FATEC São Paulo", regional: "São Paulo", metasNoPrazo: 78, status: "good" as const },
   { name: "ETEC Martin Luther King", regional: "São Paulo", metasNoPrazo: 65, status: "warning" as const },
   { name: "ETEC Albert Einstein", regional: "São Paulo", metasNoPrazo: 41, status: "critical" as const },
-  { name: "FATEC Campinas", regional: "Campinas", metasNoPrazo: 88, status: "good" as const },
+  { name: "ETEC Mandaqui", regional: "São Paulo", metasNoPrazo: 78, status: "good" as const },
   { name: "ETEC Bento Quirino", regional: "Campinas", metasNoPrazo: 54, status: "warning" as const },
   { name: "ETEC Cons. Antônio Prado", regional: "Campinas", metasNoPrazo: 47, status: "critical" as const },
-  { name: "FATEC Sorocaba", regional: "Sorocaba", metasNoPrazo: 83, status: "good" as const },
+  { name: "ETEC Polivalente", regional: "Campinas", metasNoPrazo: 88, status: "good" as const },
   { name: "ETEC Rubens de Faria", regional: "Sorocaba", metasNoPrazo: 60, status: "warning" as const },
   { name: "ETEC Fernando Prestes", regional: "Sorocaba", metasNoPrazo: 35, status: "critical" as const },
+  { name: "ETEC Botucatu", regional: "Sorocaba", metasNoPrazo: 83, status: "good" as const },
 ];
 
 const statusColor: Record<string, string> = {
