@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar, { type ViewType } from "@/components/AppSidebar";
 import DashboardSection from "@/components/DashboardSection";
@@ -14,7 +14,7 @@ import CicloGestaoPanel from "@/components/CicloGestaoPanel";
 import SituacaoPieChart from "@/components/SituacaoPieChart";
 import TopProblemasChart from "@/components/TopProblemasChart";
 import SinteseExecutivaPanel from "@/components/SinteseExecutivaPanel";
-import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart } from "lucide-react";
+import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart, Moon, Sun } from "lucide-react";
 import { problems, getSmartStats } from "@/data/problems";
 
 const schoolsByRegional: Record<string, string[]> = {
@@ -30,6 +30,11 @@ const viewLabels: Record<ViewType, { label: string; icon: typeof Building2 }> = 
 };
 
 const Index = () => {
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") document.documentElement.classList.add("dark");
+  }, []);
+
   const [currentView, setCurrentView] = useState<ViewType>("presidencia");
   const [selectedRegional, setSelectedRegional] = useState("Todas");
   const [selectedSchool, setSelectedSchool] = useState("Todas");
@@ -109,7 +114,7 @@ const Index = () => {
             <div className="bg-card/80 backdrop-blur-sm border-b px-6 py-3 flex items-center gap-3">
               <SidebarTrigger />
               <div className="w-px h-6 bg-border" />
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 flex-1">
                 <ViewIcon className="h-4 w-4 text-primary" />
                 <div>
                   <h1 className="text-sm font-bold text-foreground leading-tight">
@@ -121,6 +126,17 @@ const Index = () => {
                   </span>
                 </div>
               </div>
+              <button
+                onClick={() => {
+                  const isDark = document.documentElement.classList.toggle("dark");
+                  localStorage.setItem("theme", isDark ? "dark" : "light");
+                }}
+                className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-muted transition-colors"
+                title="Alternar tema"
+              >
+                <Sun className="h-4 w-4 text-muted-foreground dark:hidden" />
+                <Moon className="h-4 w-4 text-muted-foreground hidden dark:block" />
+              </button>
             </div>
           </header>
 
