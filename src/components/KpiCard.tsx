@@ -1,24 +1,37 @@
 interface KpiCardProps {
   label: string;
   value: string;
-  trend?: "up" | "down" | "neutral";
+  subtitle?: string;
   status?: "good" | "warning" | "critical";
 }
 
-const statusColors: Record<string, string> = {
+const statusDot: Record<string, string> = {
   good: "bg-success",
   warning: "bg-warning",
   critical: "bg-destructive",
 };
 
-const KpiCard = ({ label, value, status }: KpiCardProps) => {
+const KpiCard = ({ label, value, subtitle, status }: KpiCardProps) => {
   return (
-    <div className="bg-card border rounded-md p-4 flex flex-col gap-1 relative overflow-hidden">
-      {status && (
-        <div className={`absolute top-0 left-0 w-full h-1 ${statusColors[status]}`} />
+    <div className="bg-card rounded-lg p-5 flex flex-col gap-2 relative transition-shadow duration-200"
+      style={{ boxShadow: 'var(--shadow-card)' }}
+      onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)'}
+      onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card)'}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">
+          {label}
+        </span>
+        {status && (
+          <span className={`h-2 w-2 rounded-full ${statusDot[status]}`} />
+        )}
+      </div>
+      <span className="text-3xl font-bold text-foreground leading-none tracking-tight">
+        {value}
+      </span>
+      {subtitle && (
+        <span className="text-[11px] text-muted-foreground">{subtitle}</span>
       )}
-      <span className="text-[11px] text-muted-foreground uppercase tracking-wide">{label}</span>
-      <span className="text-2xl font-bold text-foreground">{value}</span>
     </div>
   );
 };
