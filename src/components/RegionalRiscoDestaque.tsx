@@ -34,7 +34,8 @@ const RegionalRiscoDestaque = ({ onRegionalClick }: RegionalRiscoDestaqueProps) 
   return (
     <button
       onClick={() => onRegionalClick(worst.regional)}
-      className="w-full bg-destructive/5 border border-destructive/20 rounded-lg p-5 flex items-center gap-5 text-left transition-all duration-200 hover:shadow-md group"
+      className="w-full bg-destructive/5 border-0 rounded-xl p-5 flex items-center gap-5 text-left card-hover animate-fade-up group"
+      style={{ boxShadow: 'var(--shadow-card)' }}
     >
       <div className="h-12 w-12 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
         <AlertTriangle className="h-6 w-6 text-destructive" />

@@ -9,7 +9,7 @@ interface DashboardSectionProps {
 
 const DashboardSection = ({ title, icon: Icon, children }: DashboardSectionProps) => {
   return (
-    <section className="bg-card rounded-lg transition-shadow duration-200"
+    <section className="bg-card rounded-xl card-hover border-0 animate-fade-up"
       style={{ boxShadow: 'var(--shadow-card)' }}
     >
       <div className="flex items-center gap-2.5 px-6 py-4">

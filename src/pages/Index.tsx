@@ -104,8 +104,8 @@ const Index = () => {
 
         <div className="flex-1 flex flex-col min-w-0">
           <header>
-            <div className="bg-primary h-1.5" />
-            <div className="bg-card border-b px-6 py-3 flex items-center gap-3">
+            <div className="h-1.5" style={{ background: 'linear-gradient(90deg, hsl(0, 100%, 35%) 0%, hsl(0, 70%, 50%) 50%, hsl(0, 45%, 60%) 100%)' }} />
+            <div className="bg-card/80 backdrop-blur-sm border-b px-6 py-3 flex items-center gap-3">
               <SidebarTrigger />
               <div className="w-px h-6 bg-border" />
               <div className="flex items-center gap-2.5">
@@ -123,7 +123,7 @@ const Index = () => {
             </div>
           </header>
 
-          <main className="flex-1 px-6 py-6 space-y-6 max-w-[1440px] w-full mx-auto">
+          <main className="flex-1 px-6 py-6 space-y-6 max-w-[1440px] w-full mx-auto view-transition" key={currentView + selectedRegional + selectedSchool}>
             {currentView === "presidencia" && (
               <PresidenciaView
                 metasNoPrazo={metasNoPrazo}
@@ -184,7 +184,7 @@ const PresidenciaView = ({
 
     <DashboardSection title="Indicadores Principais" icon={BarChart3}>
       {(() => { const s = getSmartStats(problems); return (
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-5 w-full">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-5 w-full stagger-children">
         <KpiCard label="Metas no Prazo" value="72%" subtitle="das metas vigentes" status="good" />
         <KpiCard label="Regionais" value="3" subtitle="ativas na rede" status="good" />
         <KpiCard label="Escolas em Risco" value={String(escolasEmRisco)} subtitle="abaixo do esperado" status="critical" />

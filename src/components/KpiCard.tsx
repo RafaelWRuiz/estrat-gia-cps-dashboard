@@ -13,10 +13,8 @@ const statusDot: Record<string, string> = {
 
 const KpiCard = ({ label, value, subtitle, status }: KpiCardProps) => {
   return (
-    <div className="bg-card rounded-lg p-5 flex flex-col gap-2 relative transition-shadow duration-200"
+    <div className="bg-card rounded-xl p-5 flex flex-col gap-2 relative card-hover border-0"
       style={{ boxShadow: 'var(--shadow-card)' }}
-      onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)'}
-      onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card)'}
     >
       <div className="flex items-center justify-between">
         <span className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">

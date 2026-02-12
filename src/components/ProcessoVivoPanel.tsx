@@ -18,11 +18,11 @@ const eixoData = [
 ];
 
 const eixoColors = [
-  "hsl(0, 100%, 35%)",
-  "hsl(0, 60%, 50%)",
-  "hsl(0, 40%, 60%)",
-  "hsl(0, 20%, 45%)",
-  "hsl(0, 0%, 55%)",
+  "#C62828",
+  "#D45050",
+  "#D9A441",
+  "#2E7D5B",
+  "#A0AEC0",
 ];
 
 const ProcessoVivoPanel = () => {
