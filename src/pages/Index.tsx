@@ -28,21 +28,39 @@ const viewLabels: Record<ViewType, { label: string; icon: typeof Building2 }> = 
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<ViewType>("presidencia");
-  const [selectedRegional, setSelectedRegional] = useState("São Paulo");
-  const [selectedSchool, setSelectedSchool] = useState("ETEC Paulistano");
+  const [selectedRegional, setSelectedRegional] = useState("Todas");
+  const [selectedSchool, setSelectedSchool] = useState("Todas");
+  const [selectedEixo, setSelectedEixo] = useState("Todos");
+  const [selectedStatus, setSelectedStatus] = useState("Todos");
 
   const handleRegionalChange = (regional: string) => {
     setSelectedRegional(regional);
-    setSelectedSchool(schoolsByRegional[regional]?.[0] || "");
+    setSelectedSchool("Todas");
   };
 
   const handleViewChange = (view: ViewType) => {
     setCurrentView(view);
+    setSelectedEixo("Todos");
+    setSelectedStatus("Todos");
+    if (view === "presidencia") {
+      setSelectedRegional("Todas");
+    } else if (view === "regional" && (selectedRegional === "Todas" || !selectedRegional)) {
+      setSelectedRegional("São Paulo");
+    }
+    if (view === "regional") {
+      setSelectedSchool("Todas");
+    } else if (view === "unidade" && (selectedSchool === "Todas" || !selectedSchool)) {
+      const reg = selectedRegional === "Todas" ? "São Paulo" : selectedRegional;
+      setSelectedRegional(reg);
+      setSelectedSchool(schoolsByRegional[reg]?.[0] || "");
+    }
   };
 
   const handleRegionalClick = (regional: string) => {
     setSelectedRegional(regional);
-    setSelectedSchool(schoolsByRegional[regional]?.[0] || "");
+    setSelectedSchool("Todas");
+    setSelectedEixo("Todos");
+    setSelectedStatus("Todos");
     setCurrentView("regional");
   };
 
@@ -76,6 +94,10 @@ const Index = () => {
           onRegionalChange={handleRegionalChange}
           selectedSchool={selectedSchool}
           onSchoolChange={setSelectedSchool}
+          selectedEixo={selectedEixo}
+          onEixoChange={setSelectedEixo}
+          selectedStatus={selectedStatus}
+          onStatusChange={setSelectedStatus}
         />
 
         <div className="flex-1 flex flex-col min-w-0">
@@ -105,6 +127,8 @@ const Index = () => {
                 metasNoPrazo={metasNoPrazo}
                 escolasEmRisco={escolasEmRisco}
                 onRegionalClick={handleRegionalClick}
+                filterRegional={selectedRegional !== "Todas" ? selectedRegional : undefined}
+                filterStatus={selectedStatus}
               />
             )}
             {currentView === "regional" && (
@@ -112,6 +136,9 @@ const Index = () => {
                 regional={selectedRegional}
                 metasNoPrazo={metasNoPrazo}
                 escolasEmRisco={escolasEmRisco}
+                filterEscola={selectedSchool !== "Todas" ? selectedSchool : undefined}
+                filterEixo={selectedEixo}
+                filterStatus={selectedStatus}
               />
             )}
             {currentView === "unidade" && (
@@ -119,6 +146,8 @@ const Index = () => {
                 escola={selectedSchool}
                 regional={selectedRegional}
                 metasNoPrazo={metasNoPrazo}
+                filterEixo={selectedEixo}
+                filterStatus={selectedStatus}
               />
             )}
           </main>
@@ -137,10 +166,14 @@ const PresidenciaView = ({
   metasNoPrazo,
   escolasEmRisco,
   onRegionalClick,
+  filterRegional,
+  filterStatus,
 }: {
   metasNoPrazo: number;
   escolasEmRisco: number;
   onRegionalClick: (regional: string) => void;
+  filterRegional?: string;
+  filterStatus: string;
 }) => (
   <>
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
@@ -157,16 +190,16 @@ const PresidenciaView = ({
     </DashboardSection>
 
     <DashboardSection title="Desempenho por Regional" icon={MapPin}>
-      <RegionalOverviewPanel onRegionalClick={onRegionalClick} />
+      <RegionalOverviewPanel onRegionalClick={onRegionalClick} filterStatus={filterStatus} />
     </DashboardSection>
 
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <DashboardSection title="Situação das Escolas na Rede" icon={PieChart}>
-        <SituacaoPieChart />
+        <SituacaoPieChart filterRegional={filterRegional} />
       </DashboardSection>
       <div className="lg:col-span-2">
         <DashboardSection title="Principais Problemas da Rede" icon={BarChart3}>
-          <TopProblemasChart />
+          <TopProblemasChart filterRegional={filterRegional} />
         </DashboardSection>
       </div>
     </div>
@@ -187,10 +220,16 @@ const RegionalView = ({
   regional,
   metasNoPrazo,
   escolasEmRisco,
+  filterEscola,
+  filterEixo,
+  filterStatus,
 }: {
   regional: string;
   metasNoPrazo: number;
   escolasEmRisco: number;
+  filterEscola?: string;
+  filterEixo: string;
+  filterStatus: string;
 }) => (
   <>
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
@@ -215,7 +254,7 @@ const RegionalView = ({
         <ProcessoVivoPanel />
       </DashboardSection>
       <DashboardSection title={`Gestão por Problemas — ${regional}`} icon={AlertTriangle}>
-        <ProblemsPanel filterRegional={regional} />
+        <ProblemsPanel filterRegional={regional} filterEscola={filterEscola} filterEixo={filterEixo} filterStatus={filterStatus} />
       </DashboardSection>
     </div>
 
@@ -230,10 +269,14 @@ const UnidadeView = ({
   escola,
   regional,
   metasNoPrazo,
+  filterEixo,
+  filterStatus,
 }: {
   escola: string;
   regional: string;
   metasNoPrazo: number;
+  filterEixo: string;
+  filterStatus: string;
 }) => (
   <>
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={0} />
@@ -263,11 +306,11 @@ const UnidadeView = ({
     </DashboardSection>
 
     <DashboardSection title={`Problemas — ${escola}`} icon={AlertTriangle}>
-      <ProblemsPanel filterEscola={escola} />
+      <ProblemsPanel filterEscola={escola} filterEixo={filterEixo} filterStatus={filterStatus} />
     </DashboardSection>
 
     <DashboardSection title="Ações Atrasadas" icon={BarChart3}>
-      <ProblemsPanel filterEscola={escola} showOnlyDelayed />
+      <ProblemsPanel filterEscola={escola} showOnlyDelayed filterEixo={filterEixo} />
     </DashboardSection>
 
     <DashboardSection title="Aprendizagem Institucional" icon={BookOpen}>

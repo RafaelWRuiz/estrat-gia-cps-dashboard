@@ -9,10 +9,12 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { eixos } from "@/data/problems";
 
 export type ViewType = "presidencia" | "regional" | "unidade";
 
 const regionals = ["São Paulo", "Campinas", "Sorocaba"];
+const eixosList = eixos;
 
 const schoolsByRegional: Record<string, string[]> = {
   "São Paulo": ["ETEC Paulistano", "ETEC Martin Luther King", "ETEC Albert Einstein", "ETEC Mandaqui"],
@@ -27,6 +29,10 @@ interface AppSidebarProps {
   onRegionalChange: (regional: string) => void;
   selectedSchool: string;
   onSchoolChange: (school: string) => void;
+  selectedEixo: string;
+  onEixoChange: (eixo: string) => void;
+  selectedStatus: string;
+  onStatusChange: (status: string) => void;
 }
 
 const views = [
@@ -42,6 +48,10 @@ export function AppSidebar({
   onRegionalChange,
   selectedSchool,
   onSchoolChange,
+  selectedEixo,
+  onEixoChange,
+  selectedStatus,
+  onStatusChange,
 }: AppSidebarProps) {
   const availableSchools = schoolsByRegional[selectedRegional] || [];
 
@@ -93,51 +103,91 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {(currentView === "regional" || currentView === "unidade") && (
-          <>
-            <SidebarSeparator />
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-[9px] uppercase tracking-widest px-5">Filtros</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <div className="px-5 space-y-3 mt-1">
-                  <div className="space-y-1">
-                    <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
-                      Regional
-                    </label>
-                    <Select value={selectedRegional} onValueChange={onRegionalChange}>
-                      <SelectTrigger className="h-8 text-xs bg-muted border-0">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {regionals.map((r) => (
-                          <SelectItem key={r} value={r} className="text-xs">{r}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {currentView === "unidade" && (
-                    <div className="space-y-1">
-                      <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
-                        Escola
-                      </label>
-                      <Select value={selectedSchool} onValueChange={onSchoolChange}>
-                        <SelectTrigger className="h-8 text-xs bg-muted border-0">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableSchools.map((s) => (
-                            <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
+        <SidebarSeparator />
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-widest px-5">Filtros</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <div className="px-5 space-y-3 mt-1">
+              {/* Presidência: Regional (opcional) */}
+              {currentView === "presidencia" && (
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
+                    Regional
+                  </label>
+                  <Select value={selectedRegional} onValueChange={onRegionalChange}>
+                    <SelectTrigger className="h-8 text-xs bg-muted border-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Todas" className="text-xs">Todas</SelectItem>
+                      {regionals.map((r) => (
+                        <SelectItem key={r} value={r} className="text-xs">{r}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </>
-        )}
+              )}
+
+              {/* Regional: Escola (opcional) */}
+              {currentView === "regional" && (
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
+                    Escola
+                  </label>
+                  <Select value={selectedSchool} onValueChange={onSchoolChange}>
+                    <SelectTrigger className="h-8 text-xs bg-muted border-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Todas" className="text-xs">Todas</SelectItem>
+                      {availableSchools.map((s) => (
+                        <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Regional + Unidade: Eixo estratégico */}
+              {(currentView === "regional" || currentView === "unidade") && (
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
+                    Eixo Estratégico
+                  </label>
+                  <Select value={selectedEixo} onValueChange={onEixoChange}>
+                    <SelectTrigger className="h-8 text-xs bg-muted border-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
+                      {eixosList.map((e) => (
+                        <SelectItem key={e} value={e} className="text-xs">{e}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Todos os níveis: Status */}
+              <div className="space-y-1">
+                <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
+                  Status
+                </label>
+                <Select value={selectedStatus} onValueChange={onStatusChange}>
+                  <SelectTrigger className="h-8 text-xs bg-muted border-0">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
+                    <SelectItem value="good" className="text-xs">Adequada</SelectItem>
+                    <SelectItem value="warning" className="text-xs">Atenção</SelectItem>
+                    <SelectItem value="critical" className="text-xs">Crítico</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );
