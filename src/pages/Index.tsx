@@ -184,8 +184,11 @@ const Index = () => {
             )}
           </main>
 
-          <footer className="px-6 py-3 text-center text-[10px] text-muted-foreground">
-            Centro Paula Souza — PPG Estratégico © 2026
+          <footer className="px-6 py-4 text-center text-[10px] text-muted-foreground border-t bg-card/60 space-y-0.5">
+            <p className="font-semibold">Centro Paula Souza — PPG Estratégico © 2026</p>
+            <p>Proposta de dashboard desenvolvida pelo Prof. Rafael William Ruiz — ETEC Botucatu.</p>
+            <p>Dados fictícios, utilizados exclusivamente para fins de estudo e simulação.</p>
+            <p>Material elaborado como apoio às discussões da equipe de reestruturação do PPG.</p>
           </footer>
         </div>
       </div>
