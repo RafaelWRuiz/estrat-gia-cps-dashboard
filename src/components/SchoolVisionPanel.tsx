@@ -27,9 +27,30 @@ const regionals = ["São Paulo", "Campinas", "Sorocaba"];
 
 const SchoolVisionPanel = () => {
   const ranked = [...schools].sort((a, b) => b.metasNoPrazo - a.metasNoPrazo);
+  const topRisk = [...schools].sort((a, b) => a.metasNoPrazo - b.metasNoPrazo).slice(0, 5);
 
   return (
     <div className="w-full space-y-6">
+      {/* Top 5 escolas em risco */}
+      <div>
+        <h3 className="text-[11px] font-bold text-destructive uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-destructive" />
+          Top 5 Escolas em Maior Risco
+        </h3>
+        <div className="space-y-2">
+          {topRisk.map((s, i) => (
+            <div key={s.name} className="flex items-center gap-3 bg-destructive/5 rounded-md px-3 py-2.5">
+              <span className="text-xs font-bold text-destructive w-5 text-center">{i + 1}º</span>
+              <div className="flex-1">
+                <span className="text-xs font-semibold text-foreground">{s.name}</span>
+                <span className="text-[10px] text-muted-foreground ml-2">{s.regional}</span>
+              </div>
+              <span className="text-sm font-bold text-destructive">{s.metasNoPrazo}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Semáforo por regional */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {regionals.map((reg) => (

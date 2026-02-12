@@ -1,4 +1,4 @@
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from "recharts";
 
 const monthlyData = [
   { mes: "Set", metas: 58 },
@@ -52,6 +52,13 @@ const ProcessoVivoPanel = () => {
             <Tooltip
               contentStyle={{ fontSize: 11, borderRadius: 6, border: "1px solid hsl(220, 13%, 91%)" }}
               formatter={(value: number) => [`${value}%`, "Metas no prazo"]}
+            />
+            <ReferenceLine
+              y={80}
+              stroke="hsl(0, 0%, 65%)"
+              strokeDasharray="6 3"
+              strokeWidth={1.5}
+              label={{ value: "Meta: 80%", position: "right", fontSize: 9, fill: "hsl(0, 0%, 50%)" }}
             />
             <Line
               type="monotone"
