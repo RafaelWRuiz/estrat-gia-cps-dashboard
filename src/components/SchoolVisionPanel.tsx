@@ -25,9 +25,15 @@ const statusLabel: Record<string, string> = {
 
 const regionals = ["São Paulo", "Campinas", "Sorocaba"];
 
-const SchoolVisionPanel = () => {
-  const ranked = [...schools].sort((a, b) => b.metasNoPrazo - a.metasNoPrazo);
-  const topRisk = [...schools].sort((a, b) => a.metasNoPrazo - b.metasNoPrazo).slice(0, 5);
+interface SchoolVisionPanelProps {
+  filterRegional?: string;
+}
+
+const SchoolVisionPanel = ({ filterRegional }: SchoolVisionPanelProps) => {
+  const filtered = filterRegional ? schools.filter((s) => s.regional === filterRegional) : schools;
+  const ranked = [...filtered].sort((a, b) => b.metasNoPrazo - a.metasNoPrazo);
+  const topRisk = [...filtered].sort((a, b) => a.metasNoPrazo - b.metasNoPrazo).slice(0, 5);
+  const activeRegionals = filterRegional ? [filterRegional] : regionals;
 
   return (
     <div className="w-full space-y-6">
@@ -35,7 +41,7 @@ const SchoolVisionPanel = () => {
       <div>
         <h3 className="text-[11px] font-bold text-destructive uppercase tracking-wider mb-3 flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-destructive" />
-          Top 5 Escolas em Maior Risco
+          Top {Math.min(5, topRisk.length)} Escolas em Maior Risco
         </h3>
         <div className="space-y-2">
           {topRisk.map((s, i) => (
@@ -52,31 +58,33 @@ const SchoolVisionPanel = () => {
       </div>
 
       {/* Semáforo por regional */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {regionals.map((reg) => (
-          <div key={reg}>
-            <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
-              {reg}
-            </h3>
-            <div className="space-y-2">
-              {schools
-                .filter((s) => s.regional === reg)
-                .map((s) => (
-                  <div
-                    key={s.name}
-                    className="flex items-center justify-between bg-background rounded-md px-3 py-2"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span className={`h-2.5 w-2.5 rounded-full ${statusColor[s.status]}`} />
-                      <span className="text-xs text-foreground">{s.name}</span>
+      {!filterRegional && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {activeRegionals.map((reg) => (
+            <div key={reg}>
+              <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                {reg}
+              </h3>
+              <div className="space-y-2">
+                {schools
+                  .filter((s) => s.regional === reg)
+                  .map((s) => (
+                    <div
+                      key={s.name}
+                      className="flex items-center justify-between bg-background rounded-md px-3 py-2"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className={`h-2.5 w-2.5 rounded-full ${statusColor[s.status]}`} />
+                        <span className="text-xs text-foreground">{s.name}</span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">{statusLabel[s.status]}</span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground">{statusLabel[s.status]}</span>
-                  </div>
-                ))}
+                  ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Ranking */}
       <div>
