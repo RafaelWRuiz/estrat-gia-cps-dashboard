@@ -1,4 +1,6 @@
-import DashboardHeader from "@/components/DashboardHeader";
+import { useState } from "react";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import AppSidebar, { type ViewType } from "@/components/AppSidebar";
 import DashboardSection from "@/components/DashboardSection";
 import KpiCard from "@/components/KpiCard";
 import SituacaoGeralCard from "@/components/SituacaoGeralCard";
@@ -6,52 +8,190 @@ import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import ProblemsPanel from "@/components/ProblemsPanel";
 import ProcessoVivoPanel from "@/components/ProcessoVivoPanel";
 import AprendizagemPanel from "@/components/AprendizagemPanel";
-import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen } from "lucide-react";
+import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin } from "lucide-react";
+import { problems } from "@/data/problems";
+
+const schoolsByRegional: Record<string, string[]> = {
+  "São Paulo": ["ETEC Paulistano", "FATEC São Paulo", "ETEC Martin Luther King", "ETEC Albert Einstein"],
+  Campinas: ["FATEC Campinas", "ETEC Bento Quirino", "ETEC Cons. Antônio Prado"],
+  Sorocaba: ["FATEC Sorocaba", "ETEC Rubens de Faria", "ETEC Fernando Prestes"],
+};
+
+const viewLabels: Record<ViewType, { label: string; icon: typeof Building2 }> = {
+  presidencia: { label: "Visão Presidência — Rede Completa", icon: Building2 },
+  regional: { label: "Visão Regional", icon: MapPin },
+  unidade: { label: "Visão Unidade", icon: School },
+};
 
 const Index = () => {
+  const [currentView, setCurrentView] = useState<ViewType>("presidencia");
+  const [selectedRegional, setSelectedRegional] = useState("São Paulo");
+  const [selectedSchool, setSelectedSchool] = useState("ETEC Paulistano");
+
+  const handleRegionalChange = (regional: string) => {
+    setSelectedRegional(regional);
+    setSelectedSchool(schoolsByRegional[regional]?.[0] || "");
+  };
+
+  const handleViewChange = (view: ViewType) => {
+    setCurrentView(view);
+  };
+
+  // Compute filtered stats
+  const filteredProblems =
+    currentView === "presidencia"
+      ? problems
+      : currentView === "regional"
+        ? problems.filter((p) => p.regional === selectedRegional)
+        : problems.filter((p) => p.escola === selectedSchool);
+
+  const criticalCount = filteredProblems.filter((p) => p.status === "critical").length;
+  const totalAcoesAtrasadas = filteredProblems.reduce((s, p) => s + p.acoesAtrasadas, 0);
+  const metasNoPrazo = currentView === "presidencia" ? 72 : currentView === "regional" ? (selectedRegional === "São Paulo" ? 69 : selectedRegional === "Campinas" ? 63 : 59) : 72;
+  const escolasEmRisco = currentView === "presidencia" ? 14 : filteredProblems.filter((p) => p.status === "critical").length;
+
+  const ViewIcon = viewLabels[currentView].icon;
+  const viewSubtitle =
+    currentView === "regional"
+      ? `Regional ${selectedRegional}`
+      : currentView === "unidade"
+        ? selectedSchool
+        : "";
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <DashboardHeader />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar
+          currentView={currentView}
+          onViewChange={handleViewChange}
+          selectedRegional={selectedRegional}
+          onRegionalChange={handleRegionalChange}
+          selectedSchool={selectedSchool}
+          onSchoolChange={setSelectedSchool}
+        />
 
-      <main className="flex-1 px-8 py-7 space-y-7 max-w-[1440px] w-full mx-auto">
-        {/* Situação Geral */}
-        <SituacaoGeralCard metasNoPrazo={72} escolasEmRisco={14} />
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Header */}
+          <header>
+            <div className="bg-primary h-1.5" />
+            <div className="bg-card border-b px-6 py-3 flex items-center gap-3">
+              <SidebarTrigger />
+              <div className="w-px h-6 bg-border" />
+              <div className="flex items-center gap-2.5">
+                <ViewIcon className="h-4 w-4 text-primary" />
+                <div>
+                  <h1 className="text-sm font-bold text-foreground leading-tight">
+                    PPG Estratégico CPS
+                  </h1>
+                  <span className="text-[10px] text-muted-foreground">
+                    {viewLabels[currentView].label}
+                    {viewSubtitle && ` — ${viewSubtitle}`}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </header>
 
-        {/* Indicadores Principais */}
-        <DashboardSection title="Indicadores Principais" icon={BarChart3}>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 w-full">
-            <KpiCard label="Metas no Prazo" value="72%" subtitle="das metas vigentes" status="good" />
-            <KpiCard label="Escolas em Risco" value="14" subtitle="abaixo do esperado" status="critical" />
-            <KpiCard label="Metas SMART" value="58%" subtitle="completas" status="warning" />
-            <KpiCard label="Ações Atrasadas" value="37" subtitle="pendentes de resolução" status="critical" />
-            <KpiCard label="Problemas Críticos" value="9" subtitle="em aberto" status="critical" />
-            <KpiCard label="Novos no Mês" value="5" subtitle="problemas registrados" status="warning" />
-          </div>
-        </DashboardSection>
+          {/* Main content */}
+          <main className="flex-1 px-6 py-6 space-y-6 max-w-[1440px] w-full mx-auto">
+            {currentView === "presidencia" && <PresidenciaView metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />}
+            {currentView === "regional" && (
+              <RegionalView
+                regional={selectedRegional}
+                metasNoPrazo={metasNoPrazo}
+                escolasEmRisco={escolasEmRisco}
+              />
+            )}
+            {currentView === "unidade" && (
+              <UnidadeView
+                escola={selectedSchool}
+                regional={selectedRegional}
+                metasNoPrazo={metasNoPrazo}
+              />
+            )}
+          </main>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
-          <DashboardSection title="Visão por Escola" icon={School}>
-            <SchoolVisionPanel />
-          </DashboardSection>
-          <DashboardSection title="Processo Vivo" icon={RefreshCw}>
-            <ProcessoVivoPanel />
-          </DashboardSection>
+          <footer className="px-6 py-3 text-center text-[10px] text-muted-foreground">
+            Centro Paula Souza — PPG Estratégico © 2026
+          </footer>
         </div>
-
-        <DashboardSection title="Gestão por Problemas" icon={AlertTriangle}>
-          <ProblemsPanel />
-        </DashboardSection>
-
-        <DashboardSection title="Aprendizagem Institucional" icon={BookOpen}>
-          <AprendizagemPanel />
-        </DashboardSection>
-      </main>
-
-      <footer className="px-8 py-4 text-center text-[10px] text-muted-foreground">
-        Centro Paula Souza — PPG Estratégico © 2026
-      </footer>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
+
+/* ─── Visão Presidência ─── */
+const PresidenciaView = ({ metasNoPrazo, escolasEmRisco }: { metasNoPrazo: number; escolasEmRisco: number }) => (
+  <>
+    <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
+
+    <DashboardSection title="Indicadores Principais" icon={BarChart3}>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 w-full">
+        <KpiCard label="Metas no Prazo" value="72%" subtitle="das metas vigentes" status="good" />
+        <KpiCard label="Escolas em Risco" value="14" subtitle="abaixo do esperado" status="critical" />
+        <KpiCard label="Metas SMART" value="58%" subtitle="completas" status="warning" />
+        <KpiCard label="Ações Atrasadas" value="37" subtitle="pendentes de resolução" status="critical" />
+        <KpiCard label="Problemas Críticos" value="9" subtitle="em aberto" status="critical" />
+        <KpiCard label="Novos no Mês" value="5" subtitle="problemas registrados" status="warning" />
+      </div>
+    </DashboardSection>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <DashboardSection title="Visão por Escola" icon={School}>
+        <SchoolVisionPanel />
+      </DashboardSection>
+      <DashboardSection title="Processo Vivo" icon={RefreshCw}>
+        <ProcessoVivoPanel />
+      </DashboardSection>
+    </div>
+
+    <DashboardSection title="Gestão por Problemas" icon={AlertTriangle}>
+      <ProblemsPanel />
+    </DashboardSection>
+
+    <DashboardSection title="Aprendizagem Institucional" icon={BookOpen}>
+      <AprendizagemPanel />
+    </DashboardSection>
+  </>
+);
+
+/* ─── Visão Regional ─── */
+const RegionalView = ({ regional, metasNoPrazo, escolasEmRisco }: { regional: string; metasNoPrazo: number; escolasEmRisco: number }) => (
+  <>
+    <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
+
+    <DashboardSection title={`Ranking — ${regional}`} icon={School}>
+      <SchoolVisionPanel filterRegional={regional} />
+    </DashboardSection>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <DashboardSection title="Evolução das Metas" icon={RefreshCw}>
+        <ProcessoVivoPanel />
+      </DashboardSection>
+      <DashboardSection title={`Problemas Críticos — ${regional}`} icon={AlertTriangle}>
+        <ProblemsPanel filterRegional={regional} />
+      </DashboardSection>
+    </div>
+  </>
+);
+
+/* ─── Visão Unidade ─── */
+const UnidadeView = ({ escola, regional, metasNoPrazo }: { escola: string; regional: string; metasNoPrazo: number }) => (
+  <>
+    <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={0} />
+
+    <DashboardSection title={`Problemas — ${escola}`} icon={AlertTriangle}>
+      <ProblemsPanel filterEscola={escola} />
+    </DashboardSection>
+
+    <DashboardSection title="Ações Atrasadas" icon={BarChart3}>
+      <ProblemsPanel filterEscola={escola} showOnlyDelayed />
+    </DashboardSection>
+
+    <DashboardSection title="Aprendizagem Institucional" icon={BookOpen}>
+      <AprendizagemPanel filterEscola={escola} />
+    </DashboardSection>
+  </>
+);
 
 export default Index;

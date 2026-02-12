@@ -9,13 +9,27 @@ const statusConfig = {
   critical: { dot: "bg-destructive", label: "Crítico", icon: AlertCircle, textColor: "text-destructive" },
 };
 
-const ProblemsPanel = () => {
+interface ProblemsPanelProps {
+  filterRegional?: string;
+  filterEscola?: string;
+  showOnlyDelayed?: boolean;
+}
+
+const ProblemsPanel = ({ filterRegional, filterEscola, showOnlyDelayed }: ProblemsPanelProps) => {
   const [eixoFilter, setEixoFilter] = useState("Todos");
-  const [statusFilter, setStatusFilter] = useState("critical");
+  const [statusFilter, setStatusFilter] = useState(showOnlyDelayed ? "Todos" : "critical");
 
-  const criticalCount = problems.filter((p) => p.status === "critical").length;
+  // Base filter by regional/escola
+  const baseProblems = problems.filter((p) => {
+    if (filterEscola && p.escola !== filterEscola) return false;
+    if (filterRegional && p.regional !== filterRegional) return false;
+    if (showOnlyDelayed && p.acoesAtrasadas === 0) return false;
+    return true;
+  });
 
-  const filtered = problems.filter((p) => {
+  const criticalCount = baseProblems.filter((p) => p.status === "critical").length;
+
+  const filtered = baseProblems.filter((p) => {
     if (eixoFilter !== "Todos" && p.eixo !== eixoFilter) return false;
     if (statusFilter === "good" && p.status !== "good") return false;
     if (statusFilter === "warning" && p.status !== "warning") return false;
@@ -26,15 +40,33 @@ const ProblemsPanel = () => {
   return (
     <div className="w-full space-y-4">
       {/* Critical highlight */}
-      <div className="flex items-center gap-3 bg-destructive/5 rounded-md px-4 py-3">
-        <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
-          <span className="text-base font-bold text-destructive">{criticalCount}</span>
+      {!showOnlyDelayed && (
+        <div className="flex items-center gap-3 bg-destructive/5 rounded-md px-4 py-3">
+          <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+            <span className="text-base font-bold text-destructive">{criticalCount}</span>
+          </div>
+          <div>
+            <p className="text-xs font-bold text-foreground">
+              Problemas críticos{filterRegional ? ` — ${filterRegional}` : filterEscola ? ` — ${filterEscola}` : " na rede"}
+            </p>
+            <p className="text-[10px] text-muted-foreground">Requerem atenção imediata da gestão</p>
+          </div>
         </div>
-        <div>
-          <p className="text-xs font-bold text-foreground">Problemas críticos na rede</p>
-          <p className="text-[10px] text-muted-foreground">Requerem atenção imediata da gestão</p>
+      )}
+
+      {showOnlyDelayed && (
+        <div className="flex items-center gap-3 bg-warning/5 rounded-md px-4 py-3">
+          <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+            <span className="text-base font-bold text-warning">
+              {baseProblems.reduce((s, p) => s + p.acoesAtrasadas, 0)}
+            </span>
+          </div>
+          <div>
+            <p className="text-xs font-bold text-foreground">Ações atrasadas</p>
+            <p className="text-[10px] text-muted-foreground">Necessitam acompanhamento imediato</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
@@ -52,20 +84,22 @@ const ProblemsPanel = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-col gap-0.5">
-          <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">Status</label>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-7 w-[130px] text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
-              <SelectItem value="good" className="text-xs">Bom</SelectItem>
-              <SelectItem value="warning" className="text-xs">Atenção</SelectItem>
-              <SelectItem value="critical" className="text-xs">Crítico</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        {!showOnlyDelayed && (
+          <div className="flex flex-col gap-0.5">
+            <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">Status</label>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="h-7 w-[130px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Todos" className="text-xs">Todos</SelectItem>
+                <SelectItem value="good" className="text-xs">Bom</SelectItem>
+                <SelectItem value="warning" className="text-xs">Atenção</SelectItem>
+                <SelectItem value="critical" className="text-xs">Crítico</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <span className="text-[11px] text-muted-foreground ml-auto">{filtered.length} problema(s)</span>
       </div>
 
@@ -74,6 +108,11 @@ const ProblemsPanel = () => {
         {filtered.map((p) => (
           <ProblemCard key={p.id} problem={p} />
         ))}
+        {filtered.length === 0 && (
+          <p className="text-xs text-muted-foreground italic col-span-2 py-4 text-center">
+            Nenhum problema encontrado com os filtros selecionados.
+          </p>
+        )}
       </div>
     </div>
   );
