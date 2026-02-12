@@ -1,6 +1,7 @@
 import DashboardHeader from "@/components/DashboardHeader";
 import DashboardSection from "@/components/DashboardSection";
 import KpiCard from "@/components/KpiCard";
+import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen } from "lucide-react";
 
 const Index = () => {
@@ -22,7 +23,9 @@ const Index = () => {
         </DashboardSection>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
-          <DashboardSection title="Visão por Escola" icon={School} />
+          <DashboardSection title="Visão por Escola" icon={School}>
+            <SchoolVisionPanel />
+          </DashboardSection>
           <DashboardSection title="Processo Vivo" icon={RefreshCw} />
         </div>
 
