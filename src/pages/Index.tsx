@@ -12,9 +12,9 @@ import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPi
 import { problems } from "@/data/problems";
 
 const schoolsByRegional: Record<string, string[]> = {
-  "São Paulo": ["ETEC Paulistano", "FATEC São Paulo", "ETEC Martin Luther King", "ETEC Albert Einstein"],
-  Campinas: ["FATEC Campinas", "ETEC Bento Quirino", "ETEC Cons. Antônio Prado"],
-  Sorocaba: ["FATEC Sorocaba", "ETEC Rubens de Faria", "ETEC Fernando Prestes"],
+  "São Paulo": ["ETEC Paulistano", "ETEC Martin Luther King", "ETEC Albert Einstein", "ETEC Mandaqui"],
+  Campinas: ["ETEC Bento Quirino", "ETEC Cons. Antônio Prado", "ETEC Polivalente"],
+  Sorocaba: ["ETEC Rubens de Faria", "ETEC Fernando Prestes", "ETEC Botucatu"],
 };
 
 const viewLabels: Record<ViewType, { label: string; icon: typeof Building2 }> = {
