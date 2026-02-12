@@ -14,7 +14,7 @@ import CicloGestaoPanel from "@/components/CicloGestaoPanel";
 import SituacaoPieChart from "@/components/SituacaoPieChart";
 import TopProblemasChart from "@/components/TopProblemasChart";
 import SinteseExecutivaPanel from "@/components/SinteseExecutivaPanel";
-import CicloPlurianualPanel from "@/components/CicloPlurianualPanel";
+
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart, Moon, Sun } from "lucide-react";
 import { problems, getSmartStats } from "@/data/problems";
 
@@ -127,6 +127,18 @@ const Index = () => {
                   </span>
                 </div>
               </div>
+
+              {/* Ciclo PPG inline */}
+              <div className="hidden md:flex items-center gap-2 text-[10px] text-muted-foreground shrink-0">
+                <span className="font-semibold">Ciclo PPG</span>
+                <span>2024</span>
+                <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full rounded-full bg-primary/60 w-[60%]" />
+                </div>
+                <span>2028</span>
+                <span className="text-muted-foreground/70">Ano 3 de 5</span>
+              </div>
+
               <button
                 onClick={() => {
                   const isDark = document.documentElement.classList.toggle("dark");
@@ -140,10 +152,6 @@ const Index = () => {
               </button>
             </div>
           </header>
-
-          <div className="px-6 pt-4 max-w-[1440px] w-full mx-auto">
-            <CicloPlurianualPanel />
-          </div>
 
           <main className="flex-1 px-6 py-6 space-y-6 max-w-[1440px] w-full mx-auto view-transition" key={currentView + selectedRegional + selectedSchool}>
             {currentView === "presidencia" && (
