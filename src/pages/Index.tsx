@@ -141,6 +141,10 @@ const Index = () => {
             </div>
           </header>
 
+          <div className="px-6 pt-4 max-w-[1440px] w-full mx-auto">
+            <CicloPlurianualPanel />
+          </div>
+
           <main className="flex-1 px-6 py-6 space-y-6 max-w-[1440px] w-full mx-auto view-transition" key={currentView + selectedRegional + selectedSchool}>
             {currentView === "presidencia" && (
               <PresidenciaView
@@ -196,7 +200,6 @@ const PresidenciaView = ({
   filterStatus: string;
 }) => (
   <>
-    <CicloPlurianualPanel />
 
     <SinteseExecutivaPanel />
 
