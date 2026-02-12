@@ -20,6 +20,15 @@ const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
+  // Gradient from strong institutional red to lighter red
+  const colors = [
+    "hsl(0, 100%, 35%)",
+    "hsl(0, 80%, 45%)",
+    "hsl(0, 60%, 55%)",
+    "hsl(0, 45%, 65%)",
+    "hsl(0, 30%, 72%)",
+  ];
+
   return (
     <div className="w-full">
       <ResponsiveContainer width="100%" height={220}>
@@ -29,7 +38,7 @@ const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
             type="category"
             dataKey="name"
             width={220}
-            tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+            tick={{ fontSize: 11, fill: "hsl(0, 0%, 50%)" }}
             axisLine={false}
             tickLine={false}
           />
@@ -40,11 +49,12 @@ const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
               borderRadius: "6px",
               border: "1px solid hsl(var(--border))",
               boxShadow: "var(--shadow-card)",
+              background: "hsl(var(--card))",
             }}
           />
           <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={20}>
             {data.map((_, i) => (
-              <Cell key={i} fill={i === 0 ? "hsl(0, 72%, 51%)" : "hsl(0, 100%, 35%)"} opacity={1 - i * 0.12} />
+              <Cell key={i} fill={colors[i] || colors[colors.length - 1]} />
             ))}
           </Bar>
         </BarChart>
