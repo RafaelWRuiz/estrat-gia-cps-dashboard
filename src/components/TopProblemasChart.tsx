@@ -20,13 +20,13 @@ const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
-  // Gradient from strong institutional red to lighter red
+  // Gradient from institutional red to neutral gray
   const colors = [
-    "hsl(0, 100%, 35%)",
-    "hsl(0, 80%, 45%)",
-    "hsl(0, 60%, 55%)",
-    "hsl(0, 45%, 65%)",
-    "hsl(0, 30%, 72%)",
+    "#C62828",
+    "#D45050",
+    "#D9A441",
+    "#A0AEC0",
+    "#CBD5E0",
   ];
 
   return (
