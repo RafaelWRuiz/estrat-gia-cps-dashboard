@@ -14,6 +14,7 @@ import CicloGestaoPanel from "@/components/CicloGestaoPanel";
 import SituacaoPieChart from "@/components/SituacaoPieChart";
 import TopProblemasChart from "@/components/TopProblemasChart";
 import SinteseExecutivaPanel from "@/components/SinteseExecutivaPanel";
+import CicloPlurianualPanel from "@/components/CicloPlurianualPanel";
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart, Moon, Sun } from "lucide-react";
 import { problems, getSmartStats } from "@/data/problems";
 
@@ -195,6 +196,8 @@ const PresidenciaView = ({
   filterStatus: string;
 }) => (
   <>
+    <CicloPlurianualPanel />
+
     <SinteseExecutivaPanel />
 
     <RegionalRiscoDestaque onRegionalClick={onRegionalClick} />
