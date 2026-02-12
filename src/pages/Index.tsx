@@ -10,6 +10,7 @@ import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import ProblemsPanel from "@/components/ProblemsPanel";
 import ProcessoVivoPanel from "@/components/ProcessoVivoPanel";
 import AprendizagemPanel from "@/components/AprendizagemPanel";
+import CicloGestaoPanel from "@/components/CicloGestaoPanel";
 import SituacaoPieChart from "@/components/SituacaoPieChart";
 import TopProblemasChart from "@/components/TopProblemasChart";
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart } from "lucide-react";
@@ -318,6 +319,10 @@ const UnidadeView = ({
           status="good"
         />
       </div>
+    </DashboardSection>
+
+    <DashboardSection title="Ciclo de Gestão Estratégica" icon={RefreshCw}>
+      <CicloGestaoPanel escola={escola} />
     </DashboardSection>
 
     <DashboardSection title={`Problemas — ${escola}`} icon={AlertTriangle}>
