@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { problems, eixos, type Problem } from "@/data/problems";
+import { problems, eixos, isSmartCompleta, type Problem } from "@/data/problems";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Clock, CheckCircle2 } from "lucide-react";
+import { AlertCircle, Clock, CheckCircle2, CheckCheck, AlertTriangle } from "lucide-react";
 
 const statusConfig = {
   good: { dot: "bg-success", label: "Bom", icon: CheckCircle2, textColor: "text-success" },
@@ -130,6 +130,7 @@ const ProblemsPanel = ({ filterRegional, filterEscola, filterEixo, filterStatus,
 const ProblemCard = ({ problem: p }: { problem: Problem }) => {
   const cfg = statusConfig[p.status];
   const StatusIcon = cfg.icon;
+  const smartOk = isSmartCompleta(p);
 
   return (
     <div
@@ -169,6 +170,10 @@ const ProblemCard = ({ problem: p }: { problem: Problem }) => {
             {p.acoesAtrasadas} atrasada(s)
           </span>
         )}
+        <span className={`ml-auto flex items-center gap-1 text-[10px] font-semibold ${smartOk ? "text-success" : "text-warning"}`}>
+          {smartOk ? <CheckCheck className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
+          {smartOk ? "SMART completa" : "SMART incompleta"}
+        </span>
       </div>
     </div>
   );

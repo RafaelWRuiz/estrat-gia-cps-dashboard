@@ -13,7 +13,7 @@ import AprendizagemPanel from "@/components/AprendizagemPanel";
 import SituacaoPieChart from "@/components/SituacaoPieChart";
 import TopProblemasChart from "@/components/TopProblemasChart";
 import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart } from "lucide-react";
-import { problems } from "@/data/problems";
+import { problems, getSmartStats } from "@/data/problems";
 
 const schoolsByRegional: Record<string, string[]> = {
   "São Paulo": ["ETEC Paulistano", "ETEC Martin Luther King", "ETEC Albert Einstein", "ETEC Mandaqui"],
@@ -182,14 +182,18 @@ const PresidenciaView = ({
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
 
     <DashboardSection title="Indicadores Principais" icon={BarChart3}>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 w-full">
+      {(() => { const s = getSmartStats(problems); return (
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-5 w-full">
         <KpiCard label="Metas no Prazo" value="72%" subtitle="das metas vigentes" status="good" />
         <KpiCard label="Regionais" value="3" subtitle="ativas na rede" status="good" />
         <KpiCard label="Escolas em Risco" value={String(escolasEmRisco)} subtitle="abaixo do esperado" status="critical" />
         <KpiCard label="Ações Atrasadas" value="37" subtitle="pendentes de resolução" status="critical" />
         <KpiCard label="Problemas Críticos" value="9" subtitle="em aberto" status="critical" />
         <KpiCard label="Novos no Mês" value="5" subtitle="problemas registrados" status="warning" />
+        <KpiCard label="SMART Completas" value={`${s.pctCompletas}%`} subtitle={`${s.completas} de ${s.completas + s.incompletas}`} status={s.pctCompletas >= 80 ? "good" : s.pctCompletas >= 60 ? "warning" : "critical"} />
+        <KpiCard label="SMART Incompletas" value={`${s.pctIncompletas}%`} subtitle={`${s.incompletas} problema(s)`} status={s.pctIncompletas <= 20 ? "good" : s.pctIncompletas <= 40 ? "warning" : "critical"} />
       </div>
+      ); })()}
     </DashboardSection>
 
     <DashboardSection title="Desempenho por Regional" icon={MapPin}>
@@ -235,7 +239,15 @@ const RegionalView = ({
   filterStatus: string;
 }) => (
   <>
+    {(() => { const rProblems = problems.filter(p => p.regional === regional); const s = getSmartStats(rProblems); return (
+    <>
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-5 w-full">
+      <KpiCard label="SMART Completas" value={`${s.pctCompletas}%`} subtitle={`${s.completas} de ${s.completas + s.incompletas}`} status={s.pctCompletas >= 80 ? "good" : s.pctCompletas >= 60 ? "warning" : "critical"} />
+      <KpiCard label="SMART Incompletas" value={`${s.pctIncompletas}%`} subtitle={`${s.incompletas} problema(s)`} status={s.pctIncompletas <= 20 ? "good" : s.pctIncompletas <= 40 ? "warning" : "critical"} />
+    </div>
+    </>
+    ); })()}
 
     <DashboardSection title={`Ranking de Escolas — ${regional}`} icon={School}>
       <SchoolVisionPanel filterRegional={regional} />
