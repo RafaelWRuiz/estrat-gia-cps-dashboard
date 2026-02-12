@@ -1,13 +1,10 @@
-import { Building2, MapPin, School, ChevronDown } from "lucide-react";
+import { Building2, MapPin, School } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarHeader,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
@@ -49,12 +46,12 @@ export function AppSidebar({
   const availableSchools = schoolsByRegional[selectedRegional] || [];
 
   return (
-    <Sidebar>
-      <SidebarHeader className="px-4 py-5">
+    <Sidebar className="border-r border-border bg-card">
+      <SidebarHeader className="px-5 py-6">
         <div className="flex items-center gap-2.5">
           <div className="w-1 h-8 bg-primary rounded-full" />
           <div>
-            <p className="text-xs font-bold text-sidebar-foreground leading-tight">PPG Estratégico</p>
+            <p className="text-xs font-bold text-foreground leading-tight">PPG Estratégico</p>
             <p className="text-[10px] text-muted-foreground">Centro Paula Souza</p>
           </div>
         </div>
@@ -64,25 +61,35 @@ export function AppSidebar({
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[9px] uppercase tracking-widest">Nível de Gestão</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-widest px-5">Nível de Gestão</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {views.map((v) => (
-                <SidebarMenuItem key={v.id}>
-                  <SidebarMenuButton
-                    isActive={currentView === v.id}
+            <div className="flex flex-col gap-1 px-3 mt-1">
+              {views.map((v) => {
+                const isActive = currentView === v.id;
+                return (
+                  <button
+                    key={v.id}
                     onClick={() => onViewChange(v.id)}
-                    tooltip={v.label}
+                    className={`relative flex items-center gap-3 px-4 py-3 rounded-md text-left transition-colors ${
+                      isActive
+                        ? "bg-muted"
+                        : "hover:bg-muted/50"
+                    }`}
                   >
-                    <v.icon className="h-4 w-4" />
-                    <div className="flex flex-col">
-                      <span className="text-xs font-semibold">{v.label}</span>
+                    {isActive && (
+                      <div className="absolute left-0 top-2 bottom-2 w-[3px] bg-primary rounded-full" />
+                    )}
+                    <v.icon className="h-5 w-5 shrink-0 text-muted-foreground" />
+                    <div className="flex flex-col min-w-0">
+                      <span className={`text-xs leading-tight ${isActive ? "font-bold text-foreground" : "font-medium text-foreground"}`}>
+                        {v.label}
+                      </span>
                       <span className="text-[10px] text-muted-foreground">{v.description}</span>
                     </div>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+                  </button>
+                );
+              })}
+            </div>
           </SidebarGroupContent>
         </SidebarGroup>
 
@@ -90,15 +97,15 @@ export function AppSidebar({
           <>
             <SidebarSeparator />
             <SidebarGroup>
-              <SidebarGroupLabel className="text-[9px] uppercase tracking-widest">Filtros</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-[9px] uppercase tracking-widest px-5">Filtros</SidebarGroupLabel>
               <SidebarGroupContent>
-                <div className="px-2 space-y-3">
+                <div className="px-5 space-y-3 mt-1">
                   <div className="space-y-1">
                     <label className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">
                       Regional
                     </label>
                     <Select value={selectedRegional} onValueChange={onRegionalChange}>
-                      <SelectTrigger className="h-8 text-xs bg-sidebar-accent border-sidebar-border">
+                      <SelectTrigger className="h-8 text-xs bg-muted border-0">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -115,7 +122,7 @@ export function AppSidebar({
                         Escola
                       </label>
                       <Select value={selectedSchool} onValueChange={onSchoolChange}>
-                        <SelectTrigger className="h-8 text-xs bg-sidebar-accent border-sidebar-border">
+                        <SelectTrigger className="h-8 text-xs bg-muted border-0">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
