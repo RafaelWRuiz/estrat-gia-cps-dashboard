@@ -9,14 +9,20 @@ interface DashboardSectionProps {
 
 const DashboardSection = ({ title, icon: Icon, children }: DashboardSectionProps) => {
   return (
-    <section className="bg-card rounded-md border shadow-sm">
-      <div className="flex items-center gap-2 px-5 py-3 border-b">
-        <Icon className="h-4 w-4 text-primary" />
-        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+    <section className="bg-card rounded-lg transition-shadow duration-200"
+      style={{ boxShadow: 'var(--shadow-card)' }}
+    >
+      <div className="flex items-center gap-2.5 px-6 py-4">
+        <div className="h-7 w-7 rounded-md bg-primary/8 flex items-center justify-center">
+          <Icon className="h-3.5 w-3.5 text-primary" />
+        </div>
+        <h2 className="text-[13px] font-bold text-foreground tracking-tight">{title}</h2>
       </div>
-      <div className="p-5 min-h-[120px] flex items-center justify-center">
+      <div className="px-6 pb-6 min-h-[100px] flex items-center justify-center">
         {children || (
-          <p className="text-xs text-muted-foreground">Conteúdo será adicionado em próxima etapa</p>
+          <p className="text-xs text-muted-foreground italic">
+            Conteúdo será adicionado em próxima etapa
+          </p>
         )}
       </div>
     </section>
