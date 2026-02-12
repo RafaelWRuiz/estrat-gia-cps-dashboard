@@ -1,10 +1,14 @@
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, Tooltip } from "recharts";
 import { problems } from "@/data/problems";
 
-const TopProblemasChart = () => {
-  // Count unique schools per problem name
+interface TopProblemasChartProps {
+  filterRegional?: string;
+}
+
+const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
+  const filtered = filterRegional ? problems.filter((p) => p.regional === filterRegional) : problems;
   const problemMap = new Map<string, Set<string>>();
-  problems.forEach((p) => {
+  filtered.forEach((p) => {
     if (!problemMap.has(p.problema)) {
       problemMap.set(p.problema, new Set());
     }

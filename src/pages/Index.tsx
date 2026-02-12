@@ -4,6 +4,7 @@ import AppSidebar, { type ViewType } from "@/components/AppSidebar";
 import DashboardSection from "@/components/DashboardSection";
 import KpiCard from "@/components/KpiCard";
 import SituacaoGeralCard from "@/components/SituacaoGeralCard";
+import RegionalOverviewPanel from "@/components/RegionalOverviewPanel";
 import SchoolVisionPanel from "@/components/SchoolVisionPanel";
 import ProblemsPanel from "@/components/ProblemsPanel";
 import ProcessoVivoPanel from "@/components/ProcessoVivoPanel";
@@ -39,6 +40,12 @@ const Index = () => {
     setCurrentView(view);
   };
 
+  const handleRegionalClick = (regional: string) => {
+    setSelectedRegional(regional);
+    setSelectedSchool(schoolsByRegional[regional]?.[0] || "");
+    setCurrentView("regional");
+  };
+
   // Compute filtered stats
   const filteredProblems =
     currentView === "presidencia"
@@ -47,10 +54,9 @@ const Index = () => {
         ? problems.filter((p) => p.regional === selectedRegional)
         : problems.filter((p) => p.escola === selectedSchool);
 
-  const criticalCount = filteredProblems.filter((p) => p.status === "critical").length;
   const totalAcoesAtrasadas = filteredProblems.reduce((s, p) => s + p.acoesAtrasadas, 0);
   const metasNoPrazo = currentView === "presidencia" ? 72 : currentView === "regional" ? (selectedRegional === "São Paulo" ? 69 : selectedRegional === "Campinas" ? 63 : 59) : 72;
-  const escolasEmRisco = currentView === "presidencia" ? 14 : filteredProblems.filter((p) => p.status === "critical").length;
+  const escolasEmRisco = currentView === "presidencia" ? 3 : filteredProblems.filter((p) => p.status === "critical").length;
 
   const ViewIcon = viewLabels[currentView].icon;
   const viewSubtitle =
@@ -73,7 +79,6 @@ const Index = () => {
         />
 
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Header */}
           <header>
             <div className="bg-primary h-1.5" />
             <div className="bg-card border-b px-6 py-3 flex items-center gap-3">
@@ -94,9 +99,14 @@ const Index = () => {
             </div>
           </header>
 
-          {/* Main content */}
           <main className="flex-1 px-6 py-6 space-y-6 max-w-[1440px] w-full mx-auto">
-            {currentView === "presidencia" && <PresidenciaView metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />}
+            {currentView === "presidencia" && (
+              <PresidenciaView
+                metasNoPrazo={metasNoPrazo}
+                escolasEmRisco={escolasEmRisco}
+                onRegionalClick={handleRegionalClick}
+              />
+            )}
             {currentView === "regional" && (
               <RegionalView
                 regional={selectedRegional}
@@ -123,19 +133,31 @@ const Index = () => {
 };
 
 /* ─── Visão Presidência ─── */
-const PresidenciaView = ({ metasNoPrazo, escolasEmRisco }: { metasNoPrazo: number; escolasEmRisco: number }) => (
+const PresidenciaView = ({
+  metasNoPrazo,
+  escolasEmRisco,
+  onRegionalClick,
+}: {
+  metasNoPrazo: number;
+  escolasEmRisco: number;
+  onRegionalClick: (regional: string) => void;
+}) => (
   <>
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
 
     <DashboardSection title="Indicadores Principais" icon={BarChart3}>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 w-full">
         <KpiCard label="Metas no Prazo" value="72%" subtitle="das metas vigentes" status="good" />
-        <KpiCard label="Escolas em Risco" value="14" subtitle="abaixo do esperado" status="critical" />
-        <KpiCard label="Metas SMART" value="58%" subtitle="completas" status="warning" />
+        <KpiCard label="Regionais" value="3" subtitle="ativas na rede" status="good" />
+        <KpiCard label="Escolas em Risco" value={String(escolasEmRisco)} subtitle="abaixo do esperado" status="critical" />
         <KpiCard label="Ações Atrasadas" value="37" subtitle="pendentes de resolução" status="critical" />
         <KpiCard label="Problemas Críticos" value="9" subtitle="em aberto" status="critical" />
         <KpiCard label="Novos no Mês" value="5" subtitle="problemas registrados" status="warning" />
       </div>
+    </DashboardSection>
+
+    <DashboardSection title="Desempenho por Regional" icon={MapPin}>
+      <RegionalOverviewPanel onRegionalClick={onRegionalClick} />
     </DashboardSection>
 
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -143,8 +165,8 @@ const PresidenciaView = ({ metasNoPrazo, escolasEmRisco }: { metasNoPrazo: numbe
         <SituacaoPieChart />
       </DashboardSection>
       <div className="lg:col-span-2">
-        <DashboardSection title="Visão por Escola" icon={School}>
-          <SchoolVisionPanel />
+        <DashboardSection title="Principais Problemas da Rede" icon={BarChart3}>
+          <TopProblemasChart />
         </DashboardSection>
       </div>
     </div>
@@ -153,45 +175,92 @@ const PresidenciaView = ({ metasNoPrazo, escolasEmRisco }: { metasNoPrazo: numbe
       <DashboardSection title="Processo Vivo" icon={RefreshCw}>
         <ProcessoVivoPanel />
       </DashboardSection>
-      <DashboardSection title="Principais Problemas da Rede" icon={BarChart3}>
-        <TopProblemasChart />
+      <DashboardSection title="Aprendizagem Institucional" icon={BookOpen}>
+        <AprendizagemPanel />
       </DashboardSection>
     </div>
-
-    <DashboardSection title="Gestão por Problemas" icon={AlertTriangle}>
-      <ProblemsPanel />
-    </DashboardSection>
-
-    <DashboardSection title="Aprendizagem Institucional" icon={BookOpen}>
-      <AprendizagemPanel />
-    </DashboardSection>
   </>
 );
 
 /* ─── Visão Regional ─── */
-const RegionalView = ({ regional, metasNoPrazo, escolasEmRisco }: { regional: string; metasNoPrazo: number; escolasEmRisco: number }) => (
+const RegionalView = ({
+  regional,
+  metasNoPrazo,
+  escolasEmRisco,
+}: {
+  regional: string;
+  metasNoPrazo: number;
+  escolasEmRisco: number;
+}) => (
   <>
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={escolasEmRisco} />
 
-    <DashboardSection title={`Ranking — ${regional}`} icon={School}>
+    <DashboardSection title={`Ranking de Escolas — ${regional}`} icon={School}>
       <SchoolVisionPanel filterRegional={regional} />
     </DashboardSection>
+
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <DashboardSection title={`Situação das Escolas — ${regional}`} icon={PieChart}>
+        <SituacaoPieChart filterRegional={regional} />
+      </DashboardSection>
+      <div className="lg:col-span-2">
+        <DashboardSection title={`Principais Problemas — ${regional}`} icon={BarChart3}>
+          <TopProblemasChart filterRegional={regional} />
+        </DashboardSection>
+      </div>
+    </div>
 
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <DashboardSection title="Evolução das Metas" icon={RefreshCw}>
         <ProcessoVivoPanel />
       </DashboardSection>
-      <DashboardSection title={`Problemas Críticos — ${regional}`} icon={AlertTriangle}>
+      <DashboardSection title={`Gestão por Problemas — ${regional}`} icon={AlertTriangle}>
         <ProblemsPanel filterRegional={regional} />
       </DashboardSection>
     </div>
+
+    <DashboardSection title={`Aprendizagem Institucional — ${regional}`} icon={BookOpen}>
+      <AprendizagemPanel filterRegional={regional} />
+    </DashboardSection>
   </>
 );
 
 /* ─── Visão Unidade ─── */
-const UnidadeView = ({ escola, regional, metasNoPrazo }: { escola: string; regional: string; metasNoPrazo: number }) => (
+const UnidadeView = ({
+  escola,
+  regional,
+  metasNoPrazo,
+}: {
+  escola: string;
+  regional: string;
+  metasNoPrazo: number;
+}) => (
   <>
     <SituacaoGeralCard metasNoPrazo={metasNoPrazo} escolasEmRisco={0} />
+
+    <DashboardSection title={`Indicadores — ${escola}`} icon={BarChart3}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 w-full">
+        <KpiCard label="Metas no Prazo" value={`${metasNoPrazo}%`} subtitle="da escola" status={metasNoPrazo >= 70 ? "good" : metasNoPrazo >= 50 ? "warning" : "critical"} />
+        <KpiCard
+          label="Problemas Críticos"
+          value={String(problems.filter((p) => p.escola === escola && p.status === "critical").length)}
+          subtitle="em aberto"
+          status="critical"
+        />
+        <KpiCard
+          label="Ações Atrasadas"
+          value={String(problems.filter((p) => p.escola === escola).reduce((s, p) => s + p.acoesAtrasadas, 0))}
+          subtitle="pendentes"
+          status="warning"
+        />
+        <KpiCard
+          label="Total de Ações"
+          value={String(problems.filter((p) => p.escola === escola).reduce((s, p) => s + p.totalAcoes, 0))}
+          subtitle="registradas"
+          status="good"
+        />
+      </div>
+    </DashboardSection>
 
     <DashboardSection title={`Problemas — ${escola}`} icon={AlertTriangle}>
       <ProblemsPanel filterEscola={escola} />

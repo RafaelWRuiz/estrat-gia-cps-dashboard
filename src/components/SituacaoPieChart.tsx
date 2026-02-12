@@ -1,16 +1,16 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-const schools = [
-  { name: "ETEC Paulistano", status: "good" },
-  { name: "ETEC Martin Luther King", status: "warning" },
-  { name: "ETEC Albert Einstein", status: "critical" },
-  { name: "ETEC Mandaqui", status: "good" },
-  { name: "ETEC Bento Quirino", status: "warning" },
-  { name: "ETEC Cons. Antônio Prado", status: "critical" },
-  { name: "ETEC Polivalente", status: "good" },
-  { name: "ETEC Rubens de Faria", status: "warning" },
-  { name: "ETEC Fernando Prestes", status: "critical" },
-  { name: "ETEC Botucatu", status: "good" },
+const allSchools = [
+  { name: "ETEC Paulistano", regional: "São Paulo", status: "good" },
+  { name: "ETEC Martin Luther King", regional: "São Paulo", status: "warning" },
+  { name: "ETEC Albert Einstein", regional: "São Paulo", status: "critical" },
+  { name: "ETEC Mandaqui", regional: "São Paulo", status: "good" },
+  { name: "ETEC Bento Quirino", regional: "Campinas", status: "warning" },
+  { name: "ETEC Cons. Antônio Prado", regional: "Campinas", status: "critical" },
+  { name: "ETEC Polivalente", regional: "Campinas", status: "good" },
+  { name: "ETEC Rubens de Faria", regional: "Sorocaba", status: "warning" },
+  { name: "ETEC Fernando Prestes", regional: "Sorocaba", status: "critical" },
+  { name: "ETEC Botucatu", regional: "Sorocaba", status: "good" },
 ];
 
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -19,7 +19,12 @@ const statusConfig: Record<string, { label: string; color: string }> = {
   critical: { label: "Crítico", color: "hsl(0, 72%, 51%)" },
 };
 
-const SituacaoPieChart = () => {
+interface SituacaoPieChartProps {
+  filterRegional?: string;
+}
+
+const SituacaoPieChart = ({ filterRegional }: SituacaoPieChartProps) => {
+  const schools = filterRegional ? allSchools.filter((s) => s.regional === filterRegional) : allSchools;
   const counts = schools.reduce(
     (acc, s) => {
       acc[s.status] = (acc[s.status] || 0) + 1;
