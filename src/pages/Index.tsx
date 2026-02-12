@@ -11,11 +11,13 @@ const Index = () => {
       <main className="flex-1 px-8 py-7 space-y-7 max-w-[1440px] w-full mx-auto">
         {/* Indicadores Principais */}
         <DashboardSection title="Indicadores Principais" icon={BarChart3}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 w-full">
-            <KpiCard label="Escolas Ativas" value="223" subtitle="em funcionamento" status="good" />
-            <KpiCard label="Matrículas" value="312.450" subtitle="total acumulado" status="good" />
-            <KpiCard label="Evasão" value="8,4%" subtitle="média geral" status="warning" />
-            <KpiCard label="Aproveitamento" value="76,2%" subtitle="média ponderada" status="good" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 w-full">
+            <KpiCard label="Metas no Prazo" value="72%" subtitle="das metas vigentes" status="good" />
+            <KpiCard label="Escolas em Risco" value="14" subtitle="abaixo do esperado" status="critical" />
+            <KpiCard label="Metas SMART" value="58%" subtitle="completas" status="warning" />
+            <KpiCard label="Ações Atrasadas" value="37" subtitle="pendentes de resolução" status="critical" />
+            <KpiCard label="Problemas Críticos" value="9" subtitle="em aberto" status="critical" />
+            <KpiCard label="Novos no Mês" value="5" subtitle="problemas registrados" status="warning" />
           </div>
         </DashboardSection>
 
