@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, Tooltip } from "recharts";
 import { problems } from "@/data/problems";
 
@@ -6,6 +7,7 @@ interface TopProblemasChartProps {
 }
 
 const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
+  const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
   const filtered = filterRegional ? problems.filter((p) => p.regional === filterRegional) : problems;
   const problemMap = new Map<string, Set<string>>();
   filtered.forEach((p) => {
@@ -20,7 +22,6 @@ const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
-  // Gradient from institutional red to neutral gray
   const colors = [
     "#C62828",
     "#D45050",
@@ -30,9 +31,10 @@ const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
   ];
 
   return (
-    <div className="w-full">
+    <div className="w-full animate-fade-up">
       <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} layout="vertical" margin={{ left: 0, right: 16, top: 4, bottom: 4 }}>
+        <BarChart data={data} layout="vertical" margin={{ left: 0, right: 16, top: 4, bottom: 4 }}
+          onMouseLeave={() => setActiveIndex(undefined)}>
           <XAxis type="number" hide />
           <YAxis
             type="category"
@@ -46,15 +48,30 @@ const TopProblemasChart = ({ filterRegional }: TopProblemasChartProps) => {
             formatter={(value: number) => [`${value} escola${value > 1 ? "s" : ""}`, "Afetadas"]}
             contentStyle={{
               fontSize: "11px",
-              borderRadius: "6px",
-              border: "1px solid hsl(var(--border))",
-              boxShadow: "var(--shadow-card)",
+              borderRadius: "8px",
+              border: "none",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
               background: "hsl(var(--card))",
+              padding: "8px 12px",
             }}
+            cursor={{ fill: "rgba(0,0,0,0.03)", radius: 4 }}
           />
-          <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={20}>
+          <Bar
+            dataKey="count"
+            radius={[0, 6, 6, 0]}
+            barSize={20}
+            animationBegin={200}
+            animationDuration={700}
+            animationEasing="ease-out"
+            onMouseEnter={(_, index) => setActiveIndex(index)}
+          >
             {data.map((_, i) => (
-              <Cell key={i} fill={colors[i] || colors[colors.length - 1]} />
+              <Cell
+                key={i}
+                fill={colors[i] || colors[colors.length - 1]}
+                opacity={activeIndex !== undefined && activeIndex !== i ? 0.35 : 1}
+                style={{ transition: "opacity 0.2s ease" }}
+              />
             ))}
           </Bar>
         </BarChart>

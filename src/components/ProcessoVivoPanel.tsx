@@ -50,7 +50,7 @@ const ProcessoVivoPanel = () => {
             <XAxis dataKey="mes" tick={{ fontSize: 10, fill: "hsl(0, 0%, 50%)" }} axisLine={false} tickLine={false} />
             <YAxis domain={[40, 100]} tick={{ fontSize: 10, fill: "hsl(0, 0%, 50%)" }} axisLine={false} tickLine={false} width={30} />
             <Tooltip
-              contentStyle={{ fontSize: 11, borderRadius: 6, border: "1px solid hsl(220, 13%, 91%)" }}
+              contentStyle={{ fontSize: 11, borderRadius: 8, border: "none", boxShadow: "0 4px 16px rgba(0,0,0,0.12)", background: "hsl(var(--card))", padding: "8px 12px" }}
               formatter={(value: number) => [`${value}%`, "Metas no prazo"]}
             />
             <ReferenceLine
@@ -63,10 +63,13 @@ const ProcessoVivoPanel = () => {
             <Line
               type="monotone"
               dataKey="metas"
-              stroke="hsl(0, 100%, 35%)"
+              stroke="#C62828"
               strokeWidth={2.5}
-              dot={{ r: 4, fill: "hsl(0, 100%, 35%)", strokeWidth: 0 }}
-              activeDot={{ r: 6 }}
+              dot={{ r: 4, fill: "#C62828", strokeWidth: 0 }}
+              activeDot={{ r: 7, fill: "#C62828", stroke: "white", strokeWidth: 2 }}
+              animationBegin={300}
+              animationDuration={800}
+              animationEasing="ease-out"
             />
           </LineChart>
         </ResponsiveContainer>
@@ -82,10 +85,10 @@ const ProcessoVivoPanel = () => {
             <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(0, 0%, 50%)" }} axisLine={false} tickLine={false} />
             <YAxis type="category" dataKey="eixo" tick={{ fontSize: 10, fill: "hsl(0, 0%, 50%)" }} axisLine={false} tickLine={false} width={90} />
             <Tooltip
-              contentStyle={{ fontSize: 11, borderRadius: 6, border: "1px solid hsl(220, 13%, 91%)" }}
+              contentStyle={{ fontSize: 11, borderRadius: 8, border: "none", boxShadow: "0 4px 16px rgba(0,0,0,0.12)", background: "hsl(var(--card))", padding: "8px 12px" }}
               formatter={(value: number) => [value, "Problemas"]}
             />
-            <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={16}>
+            <Bar dataKey="count" radius={[0, 6, 6, 0]} barSize={16} animationBegin={200} animationDuration={700} animationEasing="ease-out">
               {eixoData.map((_, i) => (
                 <Cell key={i} fill={eixoColors[i]} />
               ))}

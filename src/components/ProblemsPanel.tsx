@@ -113,7 +113,7 @@ const ProblemsPanel = ({ filterRegional, filterEscola, filterEixo, filterStatus,
       </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 stagger-children">
         {filtered.map((p) => (
           <ProblemCard key={p.id} problem={p} />
         ))}
@@ -134,7 +134,7 @@ const ProblemCard = ({ problem: p }: { problem: Problem }) => {
 
   return (
     <div
-      className="bg-background rounded-md p-4 space-y-2.5 border-l-[3px] transition-shadow duration-200"
+      className="bg-background rounded-xl p-4 space-y-2.5 border-l-[3px] card-hover cursor-default"
       style={{
         borderLeftColor: p.status === "critical" ? "hsl(var(--destructive))" : p.status === "warning" ? "hsl(var(--warning))" : "hsl(var(--success))",
         boxShadow: "var(--shadow-card)",
