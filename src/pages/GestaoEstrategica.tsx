@@ -504,6 +504,14 @@ function ProblemasListSection({
 
   return (
     <div className="space-y-4">
+      {/* Header + button */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold text-foreground">Problemas Registrados</h3>
+        <Button size="sm" className="gap-1.5 text-xs" onClick={onAddProblema}>
+          <Plus className="h-3.5 w-3.5" /> Novo Problema
+        </Button>
+      </div>
+
       {/* Filters */}
       <div className="flex items-end gap-3 flex-wrap">
         <FilterSelect label="Unidade" value={filterUnidade} onChange={setFilterUnidade}
@@ -520,52 +528,77 @@ function ProblemasListSection({
             { value: "Todos", label: "Todos" },
             ...Object.entries(prioridadeLabels).map(([k, v]) => ({ value: k, label: v })),
           ]} />
-        <Button size="sm" className="gap-1.5 text-xs" onClick={onAddProblema}>
-          <Plus className="h-3.5 w-3.5" /> Novo
-        </Button>
       </div>
 
       {problemas.length === 0 && (
         <p className="text-sm text-muted-foreground py-8 text-center">Nenhum problema encontrado com os filtros aplicados.</p>
       )}
 
-      <div className="grid gap-3">
-        {problemas.map((p) => {
-          const estagio = calcularEstagio(p.id, ctx.evidencias, ctx.metas, ctx.acoes, ctx.avaliacoes);
-          const estagioIdx = estagioKeys.indexOf(estagio);
-          return (
-            <Card key={p.id} className="card-hover cursor-pointer" onClick={() => onSelect(p.id)}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge className={`text-[10px] px-1.5 py-0 ${prioridadeColors[p.prioridade]}`}>
-                        {prioridadeLabels[p.prioridade]}
-                      </Badge>
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                        {situacaoLabels[p.situacao]}
-                      </Badge>
-                    </div>
-                    <p className="text-sm font-semibold text-foreground">{p.descricao}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      {p.unidadeEscolar} · {p.eixoEstrategico}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <div className="flex items-center gap-0.5">
-                      {estagioKeys.map((_, i) => (
-                        <div key={i} className={`h-1.5 w-4 rounded-full ${i <= estagioIdx ? "bg-primary" : "bg-muted"}`} />
-                      ))}
-                    </div>
-                    <span className="text-[9px] text-muted-foreground">{estagioLabels[estagio]}</span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      {/* Table-style list */}
+      {problemas.length > 0 && (
+        <Card>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/40">
+                    <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Descrição</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Eixo Estratégico</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Prioridade</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Status</th>
+                    <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Estágio do Ciclo</th>
+                    <th className="px-4 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {problemas.map((p) => {
+                    const estagio = calcularEstagio(p.id, ctx.evidencias, ctx.metas, ctx.acoes, ctx.avaliacoes);
+                    const estagioIdx = estagioKeys.indexOf(estagio);
+                    return (
+                      <tr
+                        key={p.id}
+                        className="border-b last:border-0 hover:bg-muted/30 cursor-pointer transition-colors"
+                        onClick={() => onSelect(p.id)}
+                      >
+                        <td className="px-4 py-3">
+                          <p className="text-xs font-semibold text-foreground">{p.descricao}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">{p.unidadeEscolar}</p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-xs text-foreground">{p.eixoEstrategico}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <Badge className={`text-[10px] px-1.5 py-0 ${prioridadeColors[p.prioridade]}`}>
+                            {prioridadeLabels[p.prioridade]}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3">
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                            {situacaoLabels[p.situacao]}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-0.5">
+                              {estagioKeys.map((_, i) => (
+                                <div key={i} className={`h-1.5 w-3 rounded-full ${i <= estagioIdx ? "bg-primary" : "bg-muted"}`} />
+                              ))}
+                            </div>
+                            <span className="text-[9px] text-muted-foreground whitespace-nowrap">{estagioLabels[estagio]}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
