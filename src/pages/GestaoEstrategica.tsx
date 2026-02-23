@@ -679,6 +679,7 @@ function ProblemaDetail({ problema, onBack }: { problema: ProblemaGestao; onBack
             </div>
             <p className="text-xs text-foreground">{e.descricao}</p>
             {e.valorIndicador != null && <p className="text-[10px] text-muted-foreground mt-0.5">Valor: {e.valorIndicador}</p>}
+            {e.anexo && <p className="text-[10px] text-muted-foreground mt-0.5">📎 {e.anexo}</p>}
           </div>
         ))}
       </SectionCard>
@@ -829,6 +830,7 @@ function EvidenciaDialog({ problemaId, open, onClose }: { problemaId: string; op
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [data, setData] = useState(new Date().toISOString().slice(0, 10));
+  const [anexo, setAnexo] = useState("");
 
   const handleSave = () => {
     if (!descricao.trim()) return;
@@ -838,8 +840,9 @@ function EvidenciaDialog({ problemaId, open, onClose }: { problemaId: string; op
       descricao: descricao.trim(),
       valorIndicador: valor ? Number(valor) : undefined,
       data,
+      anexo: anexo.trim() || undefined,
     });
-    setDescricao(""); setValor("");
+    setDescricao(""); setValor(""); setAnexo("");
     onClose();
   };
 
@@ -864,6 +867,9 @@ function EvidenciaDialog({ problemaId, open, onClose }: { problemaId: string; op
           </FormField>
           <FormField label="Data">
             <Input type="date" value={data} onChange={(e) => setData(e.target.value)} className="h-9 text-xs" />
+          </FormField>
+          <FormField label="Anexo (opcional)">
+            <Input value={anexo} onChange={(e) => setAnexo(e.target.value)} className="h-9 text-xs" placeholder="Nome do arquivo ou link do documento" />
           </FormField>
         </div>
         <DialogFooter>
