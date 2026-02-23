@@ -107,6 +107,8 @@ const GestaoEstrategica = () => {
         <TabsList className="mb-4">
           <TabsTrigger value="overview" className="text-xs">Visão Geral</TabsTrigger>
           <TabsTrigger value="problemas" className="text-xs">Problemas</TabsTrigger>
+          <TabsTrigger value="metas-acoes" className="text-xs">Metas e Ações</TabsTrigger>
+          <TabsTrigger value="avaliacao" className="text-xs">Avaliação e Aprendizagem</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -127,6 +129,22 @@ const GestaoEstrategica = () => {
             filterPrioridade={filterPrioridade} setFilterPrioridade={setFilterPrioridade}
             onSelect={(id) => setSelectedProblemaId(id)}
             onAddProblema={() => setActiveTab("novo")}
+          />
+        </TabsContent>
+
+        <TabsContent value="metas-acoes">
+          <MetasAcoesSection
+            problemas={filteredProblemas}
+            filterUnidade={filterUnidade}
+            setFilterUnidade={setFilterUnidade}
+          />
+        </TabsContent>
+
+        <TabsContent value="avaliacao">
+          <AvaliacaoSection
+            problemas={filteredProblemas}
+            filterUnidade={filterUnidade}
+            setFilterUnidade={setFilterUnidade}
           />
         </TabsContent>
 
@@ -283,6 +301,184 @@ function OverviewSection({
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// ────────────────────── Metas e Ações Section ──────────────────────
+function MetasAcoesSection({
+  problemas,
+  filterUnidade,
+  setFilterUnidade,
+}: {
+  problemas: ProblemaGestao[];
+  filterUnidade: string;
+  setFilterUnidade: (v: string) => void;
+}) {
+  const ctx = useGestao();
+  const problemasComMeta = problemas.filter((p) =>
+    ctx.metas.some((m) => m.problemaId === p.id)
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-end gap-3 flex-wrap">
+        <FilterSelect label="Unidade" value={filterUnidade} onChange={setFilterUnidade}
+          options={[{ value: "Todas", label: "Todas" }, ...allSchools.map((s) => ({ value: s, label: s }))]} />
+      </div>
+
+      {problemasComMeta.length === 0 && (
+        <p className="text-sm text-muted-foreground py-8 text-center">Nenhuma meta definida com os filtros aplicados.</p>
+      )}
+
+      {problemasComMeta.map((p) => {
+        const metas = ctx.metas.filter((m) => m.problemaId === p.id);
+        const acoes = ctx.acoes.filter((a) => a.problemaId === p.id);
+        return (
+          <Card key={p.id}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2 mb-1">
+                <Badge className={`text-[10px] px-1.5 py-0 ${prioridadeColors[p.prioridade]}`}>
+                  {prioridadeLabels[p.prioridade]}
+                </Badge>
+                <span className="text-[10px] text-muted-foreground">{p.unidadeEscolar}</span>
+              </div>
+              <CardTitle className="text-sm">{p.descricao}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {metas.map((m) => {
+                const metaAcoes = acoes.filter((a) => a.metaId === m.id);
+                const pct = m.valorAlvo !== 0 ? Math.min(100, Math.round((m.valorAtual / m.valorAlvo) * 100)) : 0;
+                return (
+                  <div key={m.id} className="p-3 bg-muted/50 rounded-lg space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-foreground">{m.descricao}</p>
+                        <div className="flex flex-wrap gap-3 mt-1 text-[10px] text-muted-foreground">
+                          <span>Atual: {m.valorAtual}</span>
+                          <span>Alvo: {m.valorAlvo}</span>
+                          <span>Prazo: {m.prazoFinal}</span>
+                          <span>Resp: {m.responsavel}</span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-foreground">{pct}%</span>
+                    </div>
+                    <Progress value={pct} className="h-1.5" />
+                    {metaAcoes.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Ações ({metaAcoes.length})</p>
+                        {metaAcoes.map((a) => (
+                          <div key={a.id} className="flex items-center justify-between gap-2 p-2 bg-background rounded">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[11px] text-foreground">{a.descricao}</p>
+                              <p className="text-[10px] text-muted-foreground">{a.responsavel} · {a.dataInicio} → {a.dataTermino}</p>
+                            </div>
+                            <Badge variant="outline" className="text-[10px] shrink-0">{statusAcaoLabels[a.status]}</Badge>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+}
+
+// ────────────────────── Avaliação e Aprendizagem Section ──────────────────────
+function AvaliacaoSection({
+  problemas,
+  filterUnidade,
+  setFilterUnidade,
+}: {
+  problemas: ProblemaGestao[];
+  filterUnidade: string;
+  setFilterUnidade: (v: string) => void;
+}) {
+  const ctx = useGestao();
+  const problemasComAvaliacao = problemas.filter((p) =>
+    ctx.avaliacoes.some((a) => a.problemaId === p.id)
+  );
+  const problemasComAcoes = problemas.filter((p) =>
+    ctx.acoes.some((a) => a.problemaId === p.id && (a.status === "concluida" || a.status === "em_execucao"))
+  );
+  const semAvaliacao = problemasComAcoes.filter(
+    (p) => !ctx.avaliacoes.some((a) => a.problemaId === p.id)
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-end gap-3 flex-wrap">
+        <FilterSelect label="Unidade" value={filterUnidade} onChange={setFilterUnidade}
+          options={[{ value: "Todas", label: "Todas" }, ...allSchools.map((s) => ({ value: s, label: s }))]} />
+      </div>
+
+      {/* Summary */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <Card className="card-hover">
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-foreground">{problemasComAvaliacao.length}</p>
+            <p className="text-[10px] text-muted-foreground font-medium">Avaliações registradas</p>
+          </CardContent>
+        </Card>
+        <Card className="card-hover">
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-foreground">{semAvaliacao.length}</p>
+            <p className="text-[10px] text-muted-foreground font-medium">Pendentes de avaliação</p>
+          </CardContent>
+        </Card>
+        <Card className="card-hover">
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-foreground">
+              {ctx.avaliacoes.filter((a) => a.resultadoAlcancado === "sim").length}
+            </p>
+            <p className="text-[10px] text-muted-foreground font-medium">Resultados alcançados</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {problemasComAvaliacao.length === 0 && semAvaliacao.length === 0 && (
+        <p className="text-sm text-muted-foreground py-8 text-center">Nenhum problema com ações concluídas para avaliar.</p>
+      )}
+
+      {problemasComAvaliacao.map((p) => {
+        const avs = ctx.avaliacoes.filter((a) => a.problemaId === p.id);
+        return (
+          <Card key={p.id}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2 mb-1">
+                <Badge className={`text-[10px] px-1.5 py-0 ${prioridadeColors[p.prioridade]}`}>
+                  {prioridadeLabels[p.prioridade]}
+                </Badge>
+                <span className="text-[10px] text-muted-foreground">{p.unidadeEscolar}</span>
+              </div>
+              <CardTitle className="text-sm">{p.descricao}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {avs.map((a) => (
+                <div key={a.id} className="p-3 bg-muted/50 rounded-lg space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-[10px]">
+                      Resultado: {resultadoLabels[a.resultadoAlcancado]}
+                    </Badge>
+                    {a.valorFinalIndicador != null && (
+                      <span className="text-[10px] text-muted-foreground">Valor final: {a.valorFinalIndicador}</span>
+                    )}
+                  </div>
+                  <p className="text-xs"><strong>Funcionou:</strong> {a.oqueFuncionou}</p>
+                  <p className="text-xs"><strong>Não funcionou:</strong> {a.oqueNaoFuncionou}</p>
+                  <p className="text-xs"><strong>Aprendizagem:</strong> {a.aprendizagemInstitucional}</p>
+                  <p className="text-xs"><strong>Recomendações:</strong> {a.recomendacoes}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { Building2, MapPin, School } from "lucide-react";
+import { Building2, MapPin, School, ClipboardList } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -231,6 +232,23 @@ export function AppSidebar({
                   </Select>
                 </div>
               )}
+            </div>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarSeparator />
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-widest px-5">Módulos</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <div className="px-3 mt-1">
+              <Link to="/gestao">
+                <button className="relative flex items-center gap-3 px-4 py-3 rounded-md text-left transition-colors w-full hover:bg-muted/50">
+                  <ClipboardList className="h-5 w-5 shrink-0 text-muted-foreground" />
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-xs font-medium text-foreground leading-tight">Gestão Estratégica</span>
+                    <span className="text-[10px] text-muted-foreground">Alimentação do PPG</span>
+                  </div>
+                </button>
+              </Link>
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
