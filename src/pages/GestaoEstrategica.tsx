@@ -61,6 +61,7 @@ const GestaoEstrategica = () => {
   const [filterEixo, setFilterEixo] = useState("Todos");
   const [filterStatus, setFilterStatus] = useState("Todos");
   const [filterPrioridade, setFilterPrioridade] = useState("Todos");
+  const [filterEstagio, setFilterEstagio] = useState("Todos");
 
   const ctx = useGestao();
 
@@ -70,9 +71,13 @@ const GestaoEstrategica = () => {
       if (filterEixo !== "Todos" && p.eixoEstrategico !== filterEixo) return false;
       if (filterStatus !== "Todos" && p.situacao !== filterStatus) return false;
       if (filterPrioridade !== "Todos" && p.prioridade !== filterPrioridade) return false;
+      if (filterEstagio !== "Todos") {
+        const estagio = calcularEstagio(p.id, ctx.evidencias, ctx.metas, ctx.acoes, ctx.avaliacoes);
+        if (estagio !== filterEstagio) return false;
+      }
       return true;
     });
-  }, [ctx.problemas, filterUnidade, filterEixo, filterStatus, filterPrioridade]);
+  }, [ctx.problemas, ctx.evidencias, ctx.metas, ctx.acoes, ctx.avaliacoes, filterUnidade, filterEixo, filterStatus, filterPrioridade, filterEstagio]);
 
   const selectedProblema = selectedProblemaId
     ? ctx.problemas.find((p) => p.id === selectedProblemaId) || null
@@ -127,6 +132,7 @@ const GestaoEstrategica = () => {
             filterEixo={filterEixo} setFilterEixo={setFilterEixo}
             filterStatus={filterStatus} setFilterStatus={setFilterStatus}
             filterPrioridade={filterPrioridade} setFilterPrioridade={setFilterPrioridade}
+            filterEstagio={filterEstagio} setFilterEstagio={setFilterEstagio}
             onSelect={(id) => setSelectedProblemaId(id)}
             onAddProblema={() => setActiveTab("novo")}
           />
@@ -490,6 +496,7 @@ function ProblemasListSection({
   filterEixo, setFilterEixo,
   filterStatus, setFilterStatus,
   filterPrioridade, setFilterPrioridade,
+  filterEstagio, setFilterEstagio,
   onSelect, onAddProblema,
 }: {
   problemas: ProblemaGestao[];
@@ -497,6 +504,7 @@ function ProblemasListSection({
   filterEixo: string; setFilterEixo: (v: string) => void;
   filterStatus: string; setFilterStatus: (v: string) => void;
   filterPrioridade: string; setFilterPrioridade: (v: string) => void;
+  filterEstagio: string; setFilterEstagio: (v: string) => void;
   onSelect: (id: string) => void;
   onAddProblema: () => void;
 }) {
@@ -527,6 +535,11 @@ function ProblemasListSection({
           options={[
             { value: "Todos", label: "Todos" },
             ...Object.entries(prioridadeLabels).map(([k, v]) => ({ value: k, label: v })),
+          ]} />
+        <FilterSelect label="Estágio" value={filterEstagio} onChange={setFilterEstagio}
+          options={[
+            { value: "Todos", label: "Todos" },
+            ...Object.entries(estagioLabels).map(([k, v]) => ({ value: k, label: v })),
           ]} />
       </div>
 
