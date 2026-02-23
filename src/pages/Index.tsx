@@ -15,7 +15,8 @@ import SituacaoPieChart from "@/components/SituacaoPieChart";
 import TopProblemasChart from "@/components/TopProblemasChart";
 import SinteseExecutivaPanel from "@/components/SinteseExecutivaPanel";
 
-import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart, Moon, Sun } from "lucide-react";
+import { BarChart3, School, RefreshCw, AlertTriangle, BookOpen, Building2, MapPin, PieChart, Moon, Sun, ClipboardEdit } from "lucide-react";
+import { Link } from "react-router-dom";
 import { problems, getSmartStats } from "@/data/problems";
 
 const schoolsByRegional: Record<string, string[]> = {
@@ -138,6 +139,11 @@ const Index = () => {
                 <span>2028</span>
                 <span className="text-muted-foreground/70">Ano 3 de 5</span>
               </div>
+
+              <Link to="/gestao" className="hidden md:flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1.5 rounded-md hover:bg-muted">
+                <ClipboardEdit className="h-3.5 w-3.5" />
+                <span className="font-medium">Alimentar PPG</span>
+              </Link>
 
               <button
                 onClick={() => {
