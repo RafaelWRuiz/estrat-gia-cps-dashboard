@@ -26,7 +26,7 @@ const schoolsByRegional: Record<string, string[]> = {
 };
 
 const viewLabels: Record<ViewType, { label: string; icon: typeof Building2 }> = {
-  presidencia: { label: "Visão Presidência — Rede Completa", icon: Building2 },
+  presidencia: { label: "Visão Coordenador Geral de Ensino Médio e Técnico", icon: Building2 },
   regional: { label: "Visão Regional", icon: MapPin },
   unidade: { label: "Visão Unidade", icon: School },
 };

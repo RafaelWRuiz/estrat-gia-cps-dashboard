@@ -37,7 +37,7 @@ interface AppSidebarProps {
 }
 
 const views = [
-  { id: "presidencia" as const, label: "Visão Presidência", icon: Building2, description: "Rede completa" },
+  { id: "presidencia" as const, label: "Visão Coordenador Geral", icon: Building2, description: "Ensino Médio e Técnico" },
   { id: "regional" as const, label: "Visão Regional", icon: MapPin, description: "Por regional" },
   { id: "unidade" as const, label: "Visão Unidade", icon: School, description: "Por escola" },
 ];
