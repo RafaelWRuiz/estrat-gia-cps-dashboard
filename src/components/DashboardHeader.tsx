@@ -20,7 +20,7 @@ const DashboardHeader = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <FilterSelect label="Perfil" options={["Presidência", "Supervisor Regional", "Direção"]} />
+          <FilterSelect label="Perfil" options={["Coordenador Geral de Ensino Médio e Técnico", "Supervisor Regional", "Direção"]} />
           <FilterSelect label="Regional" options={["Todas", "São Paulo", "Campinas", "Sorocaba"]} />
           <FilterSelect label="Escola" options={["Todas", "ETEC Paulistano", "FATEC São Paulo", "ETEC Prof. Basilides"]} />
         </div>
